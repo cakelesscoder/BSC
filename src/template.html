@@ -73,7 +73,7 @@
     justify-content: space-between;
     gap: 24px;
     padding: 16px 24px;
-    background: linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0) 100%);
+    background: var(--ink);
     border-radius: var(--radius-lg);
     margin-bottom: 32px;
   }
@@ -663,7 +663,7 @@
   }
 
   .welcome-text {
-    padding: 56px 56px 64px;
+    padding: 96px 56px 64px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -769,10 +769,21 @@
   }
 
   .welcome-mode .header {
-    background: var(--ink);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
     border-radius: 0;
-    padding: 20px 32px;
+    padding: 24px 32px;
     margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .welcome-mode .header.scrolled-away {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
   }
 
   /* ---------- Modal lightbox for image gallery ---------- */
@@ -893,7 +904,7 @@
   /* ---------- Print styles for the summary ---------- */
   @media print {
     .progress, .nav, .config-actions, .info-toggle, .restart-btn { display: none !important; }
-    .header { background: linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0) 100%) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .header { background: var(--ink) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     body { background: white; }
     .app { max-width: 100%; padding: 0; }
     .summary { border: none; padding: 0; background: white; box-shadow: none; }
@@ -1418,6 +1429,16 @@ function bindWelcome() {
       render();
     }
   });
+  // Auto-hide header on scroll
+  const hdr = document.querySelector('.header');
+  function onWelcomeScroll() {
+    if (!document.querySelector('.welcome-mode')) {
+      window.removeEventListener('scroll', onWelcomeScroll);
+      return;
+    }
+    hdr.classList.toggle('scrolled-away', window.scrollY > 60);
+  }
+  window.addEventListener('scroll', onWelcomeScroll, { passive: true });
   // Hero slideshow
   const hero = $('welcome-hero');
   if (hero) {
