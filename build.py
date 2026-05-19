@@ -198,6 +198,11 @@ def main():
     )
     args = ap.parse_args()
 
+    # If --image-base was not supplied on the CLI, fall back to the env var so
+    # the Netlify build command can stay a simple `python3 build.py`.
+    if args.image_base is None:
+        args.image_base = os.environ.get('IMAGE_BASE_URL') or None
+
     if args.watch:
         watch(image_base=args.image_base)
     elif args.serve:

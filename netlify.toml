@@ -1,7 +1,8 @@
 [build]
-  # IMAGE_BASE_URL must be set in Netlify → Site configuration → Environment variables.
-  # Set it to the full images path, e.g. https://your-site-name.netlify.app/images
-  command = "python3 build.py --image-base $IMAGE_BASE_URL"
+  # Optionally set IMAGE_BASE_URL in Netlify → Site configuration → Environment variables
+  # to override the image path (e.g. https://your-site-name.netlify.app/images).
+  # build.py reads that env var directly; no shell expansion needed here.
+  command = "python3 build.py"
   publish = "."
 
 [build.environment]
