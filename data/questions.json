@@ -12,7 +12,7 @@
     "n": 2,
     "key": "material",
     "title": "Material",
-    "subtitle": "What material will you weld?",
+    "subtitle": "Which materials will you be welding?",
     "short": "Material",
     "folder": "02-material",
     "icon": "⛓"
