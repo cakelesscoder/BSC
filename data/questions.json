@@ -97,23 +97,5 @@
     "short": "Guarding",
     "folder": "11-guarding",
     "icon": "⚙"
-  },
-  {
-    "n": 12,
-    "key": "install",
-    "title": "Installation",
-    "subtitle": "Installed by your team or by Orion Automation?",
-    "short": "Install",
-    "folder": null,
-    "icon": "⚒"
-  },
-  {
-    "n": 13,
-    "key": "training",
-    "title": "Training Location",
-    "subtitle": "Training at Orion HQ or at your factory?",
-    "short": "Training",
-    "folder": null,
-    "icon": "⌂"
   }
 ]

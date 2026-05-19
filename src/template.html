@@ -601,6 +601,24 @@
   .spec-label { color: var(--muted); }
   .spec-value { font-weight: 600; color: var(--ink); text-align: right; margin-left: auto; }
 
+  .training-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: rgba(20, 112, 175, 0.08);
+    border-left: 3px solid var(--orion-blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .training-note strong { color: var(--ink); }
+  .training-note-icon { color: var(--orion-yellow); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  body.config-mode .training-note { background: rgba(20,112,175,0.12); color: #a8c8e0; }
+  body.config-mode .training-note strong { color: #f0f6ff; }
+
   .config-actions {
     display: flex;
     gap: 8px;
@@ -1079,8 +1097,7 @@ const CODE_MAP = {
   touch:    { '501': 'Y', '502': 'N' },
   tables:   { '551': '1', '552': '2' },
   guarding: { '651': '1', '652': '2', '653': '3', '654': '4', '655': '5', '656': '6' },
-  install:  { '701': 'C', '702': 'O' },
-  training: { '751': 'V', '752': 'S', '753': 'N' },
+  // install and training disabled - data preserved in options/blurbs/help json
 };
 
 // Groups for segmented code display and spec sheet sections
@@ -1089,7 +1106,7 @@ const SPEC_GROUPS = [
   { title: 'Power & Torch',          keys: ['amperage', 'cooling', 'conduit'] },
   { title: 'Consumables & Features', keys: ['fume', 'wire', 'touch'] },
   { title: 'Workholding',            keys: ['tables'] },
-  { title: 'Deployment',             keys: ['guarding', 'install', 'training'] },
+  { title: 'Deployment',             keys: ['guarding'] },
 ];
 
 function buildCompactCode(selections) {
@@ -1123,7 +1140,7 @@ function getValidOptions(qkey, selections) {
   }
 
   // selections is { process: '101', material: '151', ... } - convert to ordered array
-  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding','install','training'];
+  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding'];
   const qIdx = selOrder.indexOf(qkey);
   const prior = selOrder.slice(0, qIdx).map(k => selections[k] || null);
 
@@ -1268,8 +1285,8 @@ function renderWelcome() {
         <h1>Configure your robotic welding cell</h1>
         <p>Walk through 13 design decisions and we'll generate a complete specification for your Panasonic-based welding system. Built around our standard base platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.</p>
         <div class="stats">
-          <div class="stat"><div class="num">13</div><div class="lbl">Steps</div></div>
-          <div class="stat"><div class="num">~5</div><div class="lbl">Minutes</div></div>
+          <div class="stat"><div class="num">11</div><div class="lbl">Steps</div></div>
+          <div class="stat"><div class="num">~4</div><div class="lbl">Minutes</div></div>
         </div>
         <button class="btn btn-primary" id="start-btn">
           Start configuring →
@@ -1339,7 +1356,7 @@ function explainDisabled(qkey, optionCode, selections) {
   // Find which prior selection is incompatible with this option's rules.
   const rules = (DATA.rules[qkey] || []).filter(r => r[0] === optionCode);
   if (rules.length === 0) return '';
-  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding','install','training'];
+  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding'];
   const prior = selOrder.map(k => selections[k] || null);
   // For each rule, find the first prior selection that conflicts
   // and report which question it relates to.
@@ -1486,6 +1503,10 @@ function renderSummary() {
         <button class="btn btn-primary" id="copy-code">Copy</button>
       </div>
       <div class="spec-sheet">${specHtml}</div>
+      <div class="training-note">
+        <span class="training-note-icon">★</span>
+        <span><strong>On-site training included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site.</span>
+      </div>
       <div class="config-actions">
         <a class="btn btn-primary" id="email-quote" href="#">Email for quote</a>
         <button class="btn btn-secondary" id="share-link">Share link</button>
