@@ -281,19 +281,28 @@
     margin: 0;
   }
 
+  .q-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
   .info-toggle {
     border: 1px solid var(--line);
     background: var(--bg);
     color: var(--ink-soft);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 14px 8px 12px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 20px;
     border-radius: var(--radius);
     display: inline-flex;
     align-items: center;
     gap: 6px;
     flex-shrink: 0;
     transition: all 0.15s ease;
+    font-family: inherit;
+    cursor: pointer;
   }
   .info-toggle:hover { border-color: var(--orion-blue); color: var(--orion-blue); }
   .info-toggle.open { background: var(--orion-blue); color: white; border-color: var(--orion-blue); }
@@ -898,7 +907,7 @@
     .welcome-text { padding: 36px 24px; }
     .welcome-hero { min-height: 300px; }
     .q-header { flex-direction: column; gap: 16px; }
-    .info-toggle { align-self: flex-start; }
+    .q-actions { align-self: flex-start; flex-wrap: wrap; }
     .spec-sheet { columns: 1; }
   }
 
@@ -972,7 +981,7 @@
   }
 
   /* Info toggle + panel */
-  body.config-mode .info-toggle { background: var(--card); border-color: var(--line); color: #a8c8e0; }
+  body.config-mode .info-toggle { background: var(--card); border-color: #3a6080; color: #c4ddf0; }
   body.config-mode .info-toggle:hover { border-color: var(--orion-blue); color: var(--orion-blue); }
   body.config-mode .info-toggle.open  { background: var(--orion-blue); color: #fff; border-color: var(--orion-blue); }
   body.config-mode .info-panel {
@@ -1430,6 +1439,9 @@ function renderQuestion(stepIdx) {
   }
 
   const helpText = DATA.help[q.key] || '';
+  const canBack = stepIdx > 0;
+  const canNext = state.selections[q.key];
+  const isLastQuestion = stepIdx === QUESTION_KEYS.length - 1;
 
   return `
     <div class="q-header">
@@ -1438,10 +1450,16 @@ function renderQuestion(stepIdx) {
         <h2 class="q-title">${q.title}</h2>
         <p class="q-subtitle">${q.subtitle}</p>
       </div>
-      <button class="info-toggle ${state.infoOpen ? 'open' : ''}" id="info-toggle">
-        <span>${state.infoOpen ? '×' : 'i'}</span>
-        ${state.infoOpen ? 'Hide info' : 'More info'}
-      </button>
+      <div class="q-actions">
+        <button class="btn btn-secondary" id="back-btn" ${canBack ? '' : 'disabled'}>← Back</button>
+        <button class="info-toggle ${state.infoOpen ? 'open' : ''}" id="info-toggle">
+          <span>${state.infoOpen ? '×' : 'i'}</span>
+          ${state.infoOpen ? 'Hide info' : 'More info'}
+        </button>
+        <button class="btn btn-primary" id="next-btn" ${canNext ? '' : 'disabled'}>
+          ${isLastQuestion ? 'Review →' : 'Continue →'}
+        </button>
+      </div>
     </div>
     <div class="info-panel ${state.infoOpen ? 'open' : ''}">${helpText}</div>
     <div class="options">${cards}</div>
@@ -1450,19 +1468,10 @@ function renderQuestion(stepIdx) {
 
 function renderNav() {
   const completed = Object.keys(state.selections).length;
-  const canBack = state.step > 0;
-  const canNext = state.selections[QUESTION_KEYS[state.step]];
-  const isLastQuestion = state.step === QUESTION_KEYS.length - 1;
   return `
     <div class="nav">
       <div class="nav-summary">
         <strong>${completed}</strong> of ${QUESTION_KEYS.length} selections made
-      </div>
-      <div class="nav-buttons">
-        <button class="btn btn-secondary" id="back-btn" ${canBack ? '' : 'disabled'}>← Back</button>
-        <button class="btn btn-primary" id="next-btn" ${canNext ? '' : 'disabled'}>
-          ${isLastQuestion ? 'Review configuration →' : 'Continue →'}
-        </button>
       </div>
     </div>
   `;
