@@ -46,15 +46,6 @@
   },
   {
     "n": 6,
-    "key": "conduit",
-    "title": "Power Conduit Routing",
-    "subtitle": "How do you want the power conduit routed?",
-    "short": "Conduit",
-    "folder": "06-conduit",
-    "icon": "⌇"
-  },
-  {
-    "n": 7,
     "key": "fume",
     "title": "Fume Extraction",
     "subtitle": "Integrated fume extraction torch and filter?",
@@ -63,7 +54,7 @@
     "icon": "≋"
   },
   {
-    "n": 8,
+    "n": 7,
     "key": "wire",
     "title": "Wire Supply",
     "subtitle": "Wire reel, covered reel, or marathon drum pack?",
@@ -72,7 +63,7 @@
     "icon": "◯"
   },
   {
-    "n": 9,
+    "n": 8,
     "key": "touch",
     "title": "Touch Sensing",
     "subtitle": "Need touch sense searching for jig variation?",
@@ -81,7 +72,7 @@
     "icon": "⊙"
   },
   {
-    "n": 10,
+    "n": 9,
     "key": "tables",
     "title": "Jig Tables",
     "subtitle": "How many table frames mounted in the cell?",
@@ -90,7 +81,7 @@
     "icon": "▭"
   },
   {
-    "n": 11,
+    "n": 10,
     "key": "guarding",
     "title": "Guarding Design",
     "subtitle": "Which guarding configuration suits your workflow?",
