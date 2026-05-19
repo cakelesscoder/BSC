@@ -1,0 +1,146 @@
+﻿Section,ID,Existing wording,New wording
+Welcome page,welcome.eyebrow,Robotic welding cell · welding cell,Robotic welding cell · welding cell
+Welcome page,welcome.h1,Configure your robotic welding cell,Configure your robotic welding cell
+Welcome page,welcome.body,"Walk through 10 design decisions and we'll generate a complete specification for your Panasonic robot system, especially designed for welding. Built around our Australian made, internally designed fabricated platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.","Walk through 10 design decisions and we'll generate a complete specification for your Panasonic robot system, especially designed for welding. Built around our Australian made, internally designed fabricated platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators."
+Welcome page,welcome.stat_steps,10 Steps,10 Steps
+Welcome page,welcome.stat_minutes,~4 Minutes,~4 Minutes
+Welcome page,welcome.btn_start,Get started →,Get started →
+Header / nav,nav.app_name,Welding Cell Configurator,Welding Cell Configurator
+Header / nav,nav.restart_btn,↻ Start over,↻ Start over
+Question pages,q.info_toggle_open,More info,More info
+Question pages,q.info_toggle_close,Hide info,Hide info
+Question pages,q.btn_back,← Back,← Back
+Question pages,q.btn_continue,Continue →,Continue →
+Question pages,q.btn_review,Review →,Review →
+Question pages,q.unavailable_badge,Not available,Not available
+Question pages,q.photos_btn,📷 See all {n} photos,📷 See all {n} photos
+Summary page,summary.eyebrow,Configuration complete,Configuration complete
+Summary page,summary.h1,Your welding cell specification,Your welding cell specification
+Summary page,summary.subtitle,Share this with our team to receive a detailed proposal.,Share this with our team to receive a detailed proposal.
+Summary page,summary.code_label,Config,Config
+Summary page,summary.btn_copy,Copy,Copy
+Summary page,summary.btn_email,Email for quote,Email for quote
+Summary page,summary.btn_edit,← Edit answers,← Edit answers
+Summary page,summary.btn_share,Share link,Share link
+Summary page,summary.btn_print,Print,Print
+Summary page,summary.btn_restart,Start over,Start over
+Summary page,summary.training_note,On-site training included for all new customers - Orion will commission your cell at your facility and train your operators on-site.,On-site training included for all new customers - Orion will commission your cell at your facility and train your operators on-site.
+Summary page,summary.start_over_confirm,Start over? Your current configuration will be cleared.,Start over? Your current configuration will be cleared.
+Question titles,q.process.title,Welding Process,Welding Process
+Question subtitles,q.process.subtitle,MIG or TIG?,MIG or TIG?
+Question labels,q.process.short,Process,Process
+Question titles,q.material.title,Material,Material
+Question subtitles,q.material.subtitle,Which materials will you be welding?,Which materials will you be welding?
+Question labels,q.material.short,Material,Material
+Question titles,q.reach.title,Robot Arm Reach,Robot Arm Reach
+Question subtitles,q.reach.subtitle,Which manipulator best fits your work envelope?,Which manipulator best fits your work envelope?
+Question labels,q.reach.short,Reach,Reach
+Question titles,q.amperage.title,Power Source Capacity,Power Source Capacity
+Question subtitles,q.amperage.subtitle,"350 amp standard, or 500 amp for heavier duty?","350 amp standard, or 500 amp for heavier duty?"
+Question labels,q.amperage.short,Power,Power
+Question titles,q.cooling.title,Torch Cooling,Torch Cooling
+Question subtitles,q.cooling.subtitle,Gas cooled or water cooled torch?,Gas cooled or water cooled torch?
+Question labels,q.cooling.short,Cooling,Cooling
+Question titles,q.fume.title,Fume Extraction,Fume Extraction
+Question subtitles,q.fume.subtitle,Integrated fume extraction torch and filter?,Integrated fume extraction torch and filter?
+Question labels,q.fume.short,Fume,Fume
+Question titles,q.wire.title,Wire Supply,Wire Supply
+Question subtitles,q.wire.subtitle,"Wire reel, covered reel, or marathon drum pack?","Wire reel, covered reel, or marathon drum pack?"
+Question labels,q.wire.short,Wire,Wire
+Question titles,q.touch.title,Touch Sensing,Touch Sensing
+Question subtitles,q.touch.subtitle,Need touch sense searching for jig variation?,Need touch sense searching for jig variation?
+Question labels,q.touch.short,Touch,Touch
+Question titles,q.tables.title,Jig Tables,Jig Tables
+Question subtitles,q.tables.subtitle,How many table frames mounted in the cell?,How many table frames mounted in the cell?
+Question labels,q.tables.short,Tables,Tables
+Question titles,q.guarding.title,Guarding Design,Guarding Design
+Question subtitles,q.guarding.subtitle,Which guarding configuration suits your workflow?,Which guarding configuration suits your workflow?
+Question labels,q.guarding.short,Guarding,Guarding
+Option labels,option.101.label,MIG,MIG
+Option labels,option.102.label,TIG,TIG
+Option labels,option.151.label,Mild Steel,Mild Steel
+Option labels,option.152.label,Stainless Steel,Stainless Steel
+Option labels,option.153.label,Aluminium,Aluminium
+Option labels,option.154.label,Galvanised steel,Galvanised steel
+Option labels,option.155.label,Titanium & other specialised materials,Titanium & other specialised materials
+Option labels,option.156.label,Hard-facing and wear buildup,Hard-facing and wear buildup
+Option labels,option.201.label,TM1400,TM1400
+Option labels,option.202.label,TM1800,TM1800
+Option labels,option.203.label,TM2000,TM2000
+Option labels,option.204.label,TL1800,TL1800
+Option labels,option.205.label,TL2000,TL2000
+Option labels,option.251.label,350 Amp,350 Amp
+Option labels,option.252.label,500 Amp,500 Amp
+Option labels,option.301.label,Gas Cooled,Gas Cooled
+Option labels,option.302.label,Water Cooled,Water Cooled
+Option labels,option.351.label,Separate,Separate
+Option labels,option.352.label,Through Arm,Through Arm
+Option labels,option.353.label,External,External
+Option labels,option.401.label,With Fume Extraction,With Fume Extraction
+Option labels,option.402.label,No Fume Extraction,No Fume Extraction
+Option labels,option.451.label,Wire reel,Wire reel
+Option labels,option.452.label,Wire Reel with cover,Wire Reel with cover
+Option labels,option.453.label,Drum Pack,Drum Pack
+Option labels,option.501.label,Require Touch Sensing,Require Touch Sensing
+Option labels,option.502.label,Not required,Not required
+Option labels,option.551.label,1 x Jig Table Frame,1 x Jig Table Frame
+Option labels,option.552.label,2 x Jig Table Frames,2 x Jig Table Frames
+Option labels,option.651.label,"Full Guard, Posts & Panels - Light Curtain 1 Table with panel on frame","Full Guard, Posts & Panels - Light Curtain 1 Table with panel on frame"
+Option labels,option.652.label,"Full Guard, Posts & Panels - Light Curtain 1 Table as two parallel walls","Full Guard, Posts & Panels - Light Curtain 1 Table as two parallel walls"
+Option labels,option.653.label,"Full Guard, Posts & Panels - Light Curtain 2 Tables with panel on frame","Full Guard, Posts & Panels - Light Curtain 2 Tables with panel on frame"
+Option labels,option.654.label,"Full Guard, Posts & Panels - Light Curtain 2 Tables as two parallel walls","Full Guard, Posts & Panels - Light Curtain 2 Tables as two parallel walls"
+Option labels,option.655.label,2 Posts - Light Curtain 1 Table,2 Posts - Light Curtain 1 Table
+Option labels,option.656.label,2 Posts - Light Curtain 2 Tables,2 Posts - Light Curtain 2 Tables
+Option labels,option.701.label,Installation by customer,Installation by customer
+Option labels,option.702.label,Installation by Orion Automation,Installation by Orion Automation
+Option labels,option.751.label,At Orion VIC,At Orion VIC
+Option labels,option.752.label,At Customer site,At Customer site
+Option labels,option.753.label,No training required as not first system,No training required as not first system
+Option blurbs,option.101.blurb,"Gas metal arc welding - fast, versatile, suited to high-volume production","Gas metal arc welding - fast, versatile, suited to high-volume production"
+Option blurbs,option.102.blurb,Precision tungsten inert gas welding - superior appearance and metallurgical control,Precision tungsten inert gas welding - superior appearance and metallurgical control
+Option blurbs,option.156.blurb,Hard-facing alloy and wear deposit welding - high-hardness overlays for abrasion and impact resistance,Hard-facing alloy and wear deposit welding - high-hardness overlays for abrasion and impact resistance
+Option blurbs,option.201.blurb,1437 mm reach · 6 kg payload · compact for small/medium parts,1437 mm reach · 6 kg payload · compact for small/medium parts
+Option blurbs,option.202.blurb,1801 mm reach · 8 kg payload · extended general-purpose,1801 mm reach · 8 kg payload · extended general-purpose
+Option blurbs,option.203.blurb,2004 mm reach · 6 kg payload · extended reach with mid payload,2004 mm reach · 6 kg payload · extended reach with mid payload
+Option blurbs,option.204.blurb,1801 mm reach · 8 kg payload · long-arm configuration for tall parts,1801 mm reach · 8 kg payload · long-arm configuration for tall parts
+Option blurbs,option.205.blurb,2004 mm reach · 8 kg payload · maximum reach industrial manipulator,2004 mm reach · 8 kg payload · maximum reach industrial manipulator
+Option blurbs,option.251.blurb,Suits up to ~12 mm carbon steel · ideal for general fabrication,Suits up to ~12 mm carbon steel · ideal for general fabrication
+Option blurbs,option.252.blurb,Heavy section welding · high-deposition production · larger wire diameters,Heavy section welding · high-deposition production · larger wire diameters
+Option blurbs,option.301.blurb,Lower maintenance · suits up to 60 % duty cycle,Lower maintenance · suits up to 60 % duty cycle
+Option blurbs,option.302.blurb,High duty cycle production · sustained continuous welding,High duty cycle production · sustained continuous welding
+Option blurbs,option.351.blurb,Standard low-cost routing · easy field service,Standard low-cost routing · easy field service
+Option blurbs,option.352.blurb,Cables protected inside the arm · reduced snag risk,Cables protected inside the arm · reduced snag risk
+Option blurbs,option.353.blurb,Required for specific TL-series water-cooled configurations,Required for specific TL-series water-cooled configurations
+Option blurbs,option.401.blurb,Integrated extraction torch and filter unit · superior operator safety,Integrated extraction torch and filter unit · superior operator safety
+Option blurbs,option.402.blurb,Standard torch · for facilities with strong general ventilation,Standard torch · for facilities with strong general ventilation
+Option blurbs,option.451.blurb,Standard 15 kg wire reel on enclosed reel stand,Standard 15 kg wire reel on enclosed reel stand
+Option blurbs,option.452.blurb,Covered reel - wire protected from dust and contamination,Covered reel - wire protected from dust and contamination
+Option blurbs,option.453.blurb,Marathon drum pack (200–300 kg) - maximum production uptime,Marathon drum pack (200–300 kg) - maximum production uptime
+Option blurbs,option.501.blurb,Probe-on-contact joint finding - compensates for part variation,Probe-on-contact joint finding - compensates for part variation
+Option blurbs,option.502.blurb,Standard programmed paths - best for tightly-jigged repeatable parts,Standard programmed paths - best for tightly-jigged repeatable parts
+Option blurbs,option.551.blurb,Single table frame · most compact footprint,Single table frame · most compact footprint
+Option blurbs,option.552.blurb,Twin tables · operator load/unload while robot welds,Twin tables · operator load/unload while robot welds
+Option blurbs,option.651.blurb,Full enclosure with light curtain · single table · panel mounted on frame,Full enclosure with light curtain · single table · panel mounted on frame
+Option blurbs,option.652.blurb,Full enclosure with light curtain · single table · two parallel walls,Full enclosure with light curtain · single table · two parallel walls
+Option blurbs,option.653.blurb,Full enclosure with light curtain · twin tables · panel mounted on frame,Full enclosure with light curtain · twin tables · panel mounted on frame
+Option blurbs,option.654.blurb,Full enclosure with light curtain · twin tables · two parallel walls,Full enclosure with light curtain · twin tables · two parallel walls
+Option blurbs,option.655.blurb,2-post light curtain only · single table · minimum footprint,2-post light curtain only · single table · minimum footprint
+Option blurbs,option.656.blurb,2-post light curtain only · twin tables · minimum footprint,2-post light curtain only · twin tables · minimum footprint
+Option blurbs,option.701.blurb,Customer-led with full documentation and remote support,Customer-led with full documentation and remote support
+Option blurbs,option.702.blurb,"Turnkey by Orion - mechanical, electrical, commissioning, validation","Turnkey by Orion - mechanical, electrical, commissioning, validation"
+Option blurbs,option.751.blurb,Comprehensive training at Orion Melbourne facility,Comprehensive training at Orion Melbourne facility
+Option blurbs,option.752.blurb,Training at your factory using your actual cell and parts,Training at your factory using your actual cell and parts
+Option blurbs,option.753.blurb,No training needed - experienced operators on existing system,No training needed - experienced operators on existing system
+Help text,help.process,"MIG (gas metal arc) is fastest for production volume. TIG produces precise, low-distortion welds - ideal for stainless, aluminium and titanium where appearance and integrity are critical.","MIG (gas metal arc) is fastest for production volume. TIG produces precise, low-distortion welds - ideal for stainless, aluminium and titanium where appearance and integrity are critical."
+Help text,help.material,"Different materials need different power source characteristics, wire types and shielding gas. Selecting the right material here ensures the rest of the configuration is optimised for your work.","Different materials need different power source characteristics, wire types and shielding gas. Selecting the right material here ensures the rest of the configuration is optimised for your work."
+Help text,help.reach,Robot arm reach determines the maximum work envelope. Larger reach handles bigger parts but takes more floor space. The TM series is hollow wrist; the TL series offers extended reach for long parts.,Robot arm reach determines the maximum work envelope. Larger reach handles bigger parts but takes more floor space. The TM series is hollow wrist; the TL series offers extended reach for long parts.
+Help text,help.amperage,"350 amp suits most general fabrication up to ~12 mm steel. Choose 500 amp if you regularly weld heavier sections, run high-deposition single-pass welds, or use larger wire diameters.","350 amp suits most general fabrication up to ~12 mm steel. Choose 500 amp if you regularly weld heavier sections, run high-deposition single-pass welds, or use larger wire diameters."
+Help text,help.cooling,"Gas cooled torches are simpler and lower-maintenance, suited to lighter duty cycles. Water cooled torches handle continuous high amperage without overheating - essential for production environments running 60 %+ duty cycle.","Gas cooled torches are simpler and lower-maintenance, suited to lighter duty cycles. Water cooled torches handle continuous high amperage without overheating - essential for production environments running 60 %+ duty cycle."
+Help text,help.conduit,Separate routing is the lowest-cost standard option. Through-arm routing keeps cables clear of the weld zone and reduces snag risk. External routing is required for some specific robot/torch combinations.,Separate routing is the lowest-cost standard option. Through-arm routing keeps cables clear of the weld zone and reduces snag risk. External routing is required for some specific robot/torch combinations.
+Help text,help.fume,"Integrated fume extraction draws weld fume directly at the torch nozzle, dramatically improving operator safety and reducing facility ventilation load. Specify ""no extraction"" only if you have a strong external capture system.","Integrated fume extraction draws weld fume directly at the torch nozzle, dramatically improving operator safety and reducing facility ventilation load. Specify ""no extraction"" only if you have a strong external capture system."
+Help text,help.wire,Standard wire reels (15 kg) are the lowest-cost option but require more frequent changeover. Covered reels protect the wire from contamination. Marathon drum packs (200–300 kg) maximise uptime in high-volume production.,Standard wire reels (15 kg) are the lowest-cost option but require more frequent changeover. Covered reels protect the wire from contamination. Marathon drum packs (200–300 kg) maximise uptime in high-volume production.
+Help text,help.touch,"Touch sensing lets the robot probe the workpiece to find the actual joint location, compensating for jig and part-to-part variation. Recommended whenever your part tolerances exceed ±1 mm.","Touch sensing lets the robot probe the workpiece to find the actual joint location, compensating for jig and part-to-part variation. Recommended whenever your part tolerances exceed ±1 mm."
+Help text,help.tables,A single table is the most compact option. Two tables enable a load/unload cycle where the operator prepares the next part while the robot welds - significantly increasing arc-on time.,A single table is the most compact option. Two tables enable a load/unload cycle where the operator prepares the next part while the robot welds - significantly increasing arc-on time.
+Help text,help.guarding,Full panel guarding with a sliding door provides the highest containment for spatter and arc flash. 2-post light curtain configurations save space and cost but require strict procedural control.,Full panel guarding with a sliding door provides the highest containment for spatter and arc flash. 2-post light curtain configurations save space and cost but require strict procedural control.
+Help text,help.install,"Orion Automation installation includes mechanical setup, electrical commissioning, calibration and first-weld validation. Customer-led installation is supported with full documentation and remote technical assistance.","Orion Automation installation includes mechanical setup, electrical commissioning, calibration and first-weld validation. Customer-led installation is supported with full documentation and remote technical assistance."
+Help text,help.training,"On-site training at our Melbourne facility uses dedicated training cells with no production pressure. On-site training at your factory uses your actual cell, jigs and parts - typically required after major changes.","On-site training at our Melbourne facility uses dedicated training cells with no production pressure. On-site training at your factory uses your actual cell, jigs and parts - typically required after major changes."
