@@ -73,7 +73,7 @@
     justify-content: space-between;
     gap: 24px;
     padding: 16px 24px;
-    background: var(--ink);
+    background: linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0) 100%);
     border-radius: var(--radius-lg);
     margin-bottom: 32px;
   }
@@ -867,8 +867,9 @@
     .step-strip { grid-template-columns: repeat(7, 1fr); }
     .step-strip .step-pill:nth-child(n+8) { display: none; }
     .step-pill .step-label { font-size: 10px; }
-    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 16px; }
     .brand-divider { display: none; }
+    .brand-logo { height: 30px; }
     .welcome { grid-template-columns: 1fr; }
     .welcome-text { padding: 36px 24px; }
     .welcome-hero { min-height: 300px; }
@@ -888,12 +889,16 @@
       color: var(--muted);
       font-weight: 600;
     }
+    .header { padding: 12px 14px; gap: 8px; }
+    .brand-logo { height: 26px; }
+    .brand-tag { font-size: 10px; letter-spacing: 0.08em; }
+    .restart-btn { font-size: 12px; padding: 6px 10px; }
   }
 
   /* ---------- Print styles for the summary ---------- */
   @media print {
     .progress, .nav, .config-actions, .info-toggle, .restart-btn { display: none !important; }
-    .header { background: var(--ink) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .header { background: linear-gradient(to bottom, #000000 0%, rgba(0,0,0,0) 100%) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     body { background: white; }
     .app { max-width: 100%; padding: 0; }
     .summary { border: none; padding: 0; background: white; box-shadow: none; }
