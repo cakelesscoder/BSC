@@ -372,7 +372,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 8px;
     display: block;
     opacity: 0;
     transition: opacity 0.8s ease;
@@ -386,22 +387,26 @@
     font-family: 'DM Sans', sans-serif;
   }
 
-  .option-image-count {
-    position: absolute;
-    bottom: 6px;
-    right: 8px;
-    background: rgba(12, 24, 39, 0.65);
-    color: white;
-    font-size: 10px;
+  .option-photos-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    padding: 9px 16px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--line-soft);
+    color: var(--orion-blue);
+    font-size: 13px;
     font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 100px;
-    backdrop-filter: blur(4px);
-    z-index: 2;
+    font-family: inherit;
     cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    letter-spacing: 0.01em;
   }
-  .option-image-count:hover {
-    background: rgba(12, 24, 39, 0.85);
+  .option-photos-btn:hover {
+    background: var(--bg-soft);
   }
 
   .option-body {
@@ -1400,6 +1405,7 @@ function renderQuestion(stepIdx) {
     const blurb = DATA.blurbs[code] || '';
     const imgs = getImagesForOption(q.key, code);
     let imgHtml = '';
+    let photoBtn = '';
     if (imgs.length > 0) {
       imgHtml = `<img src="${imageUrl(q.key, imgs[0])}"
         data-src="${imageUrl(q.key, imgs[0])}"
@@ -1410,7 +1416,7 @@ function renderQuestion(stepIdx) {
           alt="${label}" class="">`;
       }
       if (imgs.length > 1) {
-        imgHtml += `<span class="option-image-count" data-lb-qkey="${q.key}" data-lb-code="${code}">${imgs.length} photos</span>`;
+        photoBtn = `<div class="option-photos-btn" data-lb-qkey="${q.key}" data-lb-code="${code}">&#128247; See all ${imgs.length} photos</div>`;
       }
     } else {
       imgHtml = `<div class="option-image-placeholder">${q.icon}</div>`;
@@ -1430,6 +1436,7 @@ function renderQuestion(stepIdx) {
         <div class="option-check">✓</div>
         ${unavailableBadge}
         <div class="option-image">${imgHtml}</div>
+        ${photoBtn}
         <div class="option-body">
           <div class="option-title">${label}</div>
           <p class="option-blurb">${blurb}</p>
@@ -1624,13 +1631,13 @@ function bindQuestion() {
 const slideshowTimers = new Map();
 
 function bindSlideshow() {
-  // "N photos" badge opens lightbox
-  document.querySelectorAll('.option-image-count[data-lb-qkey]').forEach(badge => {
-    badge.addEventListener('click', e => {
+  // "See all photos" button opens lightbox
+  document.querySelectorAll('.option-photos-btn[data-lb-qkey]').forEach(btn => {
+    btn.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
-      const qkey = badge.dataset.lbQkey;
-      const code = badge.dataset.lbCode;
+      const qkey = btn.dataset.lbQkey;
+      const code = btn.dataset.lbCode;
       const imgs = getImagesForOption(qkey, code);
       if (imgs.length) openLightbox(qkey, imgs);
     });
