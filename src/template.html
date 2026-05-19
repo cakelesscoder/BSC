@@ -905,6 +905,7 @@
      Dark theme — config / question / summary pages
      Applied by toggling body.config-mode in render()
      ================================================================ */
+  html.config-mode { background: #0b1929; }
   body.config-mode {
     --bg:        #0b1929;
     --bg-soft:   #0f2137;
@@ -1220,6 +1221,7 @@ function render() {
   if (state.step === -1) {
     app.classList.add('welcome-mode');
     document.body.classList.remove('config-mode');
+    document.documentElement.classList.remove('config-mode');
     app.innerHTML = renderWelcome();
     bindWelcome();
     requestAnimationFrame(postIframeHeight);
@@ -1227,6 +1229,7 @@ function render() {
   }
   app.classList.remove('welcome-mode');
   document.body.classList.add('config-mode');
+  document.documentElement.classList.add('config-mode');
   if (state.step >= QUESTION_KEYS.length) {
     app.innerHTML = renderHeader() + renderSummary();
     bindCommon();
