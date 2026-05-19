@@ -527,7 +527,6 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 24px;
-    overflow: hidden;
   }
 
   .code-bar {
@@ -584,15 +583,43 @@
     margin: 0 0 2px 0;
   }
 
+  .summary-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .summary-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .summary-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .summary-layout .summary { flex: 1; min-width: 0; }
+
   .summary-hero {
-    width: calc(100% + 48px);
-    margin: -24px -24px 20px -24px;
-    aspect-ratio: 16 / 7;
+    width: 260px;
+    flex-shrink: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    align-self: flex-start;
   }
   .summary-hero img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center bottom;
     display: block;
   }
 
@@ -630,13 +657,7 @@
   body.config-mode .training-note { background: rgba(20,112,175,0.12); color: #a8c8e0; }
   body.config-mode .training-note strong { color: #f0f6ff; }
 
-  .config-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .config-actions { display: none; }
 
   .btn-text {
     background: none;
@@ -910,6 +931,10 @@
     .q-header { flex-direction: column; gap: 16px; }
     .q-actions { align-self: flex-start; flex-wrap: wrap; }
     .spec-sheet { columns: 1; }
+    .summary-page-header { flex-direction: column; gap: 16px; }
+    .summary-actions { align-self: flex-start; flex-wrap: wrap; justify-content: flex-start; }
+    .summary-layout { flex-direction: column; }
+    .summary-hero { width: 100%; aspect-ratio: 16 / 6; order: -1; }
   }
 
   @media (max-width: 540px) {
@@ -1012,7 +1037,7 @@
 
   /* ---------- Print styles for the summary ---------- */
   @media print {
-    .progress, .nav, .config-actions, .info-toggle, .restart-btn { display: none !important; }
+    .progress, .nav, .summary-actions, .info-toggle, .restart-btn { display: none !important; }
     .header { background: var(--ink) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     body { background: white; }
     .app { max-width: 100%; padding: 0; }
@@ -1512,30 +1537,34 @@ function renderSummary() {
   history.replaceState(null, '', '#' + codeString);
 
   return `
-    <div class="title-block">
-      <div class="eyebrow">Configuration complete</div>
-      <h1>Your welding cell specification</h1>
-      <p>Send this list to Orion Automation for a quote.</p>
-    </div>
-    <div class="summary">
-      ${heroImgHtml}
-      <div class="code-bar">
-        <span class="code-bar-label">Config</span>
-        <span class="code-bar-value" id="config-code">${codeString}</span>
-        <button class="btn btn-primary" id="copy-code">Copy</button>
+    <div class="summary-page-header">
+      <div class="title-block" style="margin-bottom:0;flex:1;">
+        <div class="eyebrow">Configuration complete</div>
+        <h1>Your welding cell specification</h1>
+        <p>Send this list to Orion Automation for a quote.</p>
       </div>
-      <div class="spec-sheet">${specHtml}</div>
-      <div class="training-note">
-        <span class="training-note-icon">★</span>
-        <span><strong>On-site training included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site.</span>
-      </div>
-      <div class="config-actions">
+      <div class="summary-actions">
         <a class="btn btn-primary" id="email-quote" href="#">Email for quote</a>
         <button class="btn btn-secondary" id="back-to-config">← Edit answers</button>
         <button class="btn btn-secondary" id="share-link">Share link</button>
         <button class="btn btn-secondary" id="print-spec">Print</button>
         <button class="btn-text" id="restart-summary">Start over</button>
       </div>
+    </div>
+    <div class="summary-layout">
+      <div class="summary">
+        <div class="code-bar">
+          <span class="code-bar-label">Config</span>
+          <span class="code-bar-value" id="config-code">${codeString}</span>
+          <button class="btn btn-primary" id="copy-code">Copy</button>
+        </div>
+        <div class="spec-sheet">${specHtml}</div>
+        <div class="training-note">
+          <span class="training-note-icon">★</span>
+          <span><strong>On-site training included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site.</span>
+        </div>
+      </div>
+      ${heroImgHtml}
     </div>
   `;
 }
