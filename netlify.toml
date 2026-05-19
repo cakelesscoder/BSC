@@ -1,0 +1,8 @@
+[build]
+  # IMAGE_BASE_URL must be set in Netlify → Site configuration → Environment variables.
+  # Set it to the full images path, e.g. https://your-site-name.netlify.app/images
+  command = "python3 build.py --image-base $IMAGE_BASE_URL"
+  publish = "."
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
