@@ -1,0 +1,40 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:          # allows manual re-run from the Actions tab
+
+permissions:
+  contents: write             # required by peaceiris/actions-gh-pages to push to gh-pages
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build index.html
+        run: |
+          python3 build.py --image-base https://cakelesscoder.github.io/Base-System-Configurator/images
+
+      - name: Assemble deploy directory
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          cp -r images _site/images
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
+          force_orphan: true    # keeps gh-pages as a single-commit branch — deploy history has no value here

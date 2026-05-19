@@ -1,0 +1,119 @@
+[
+  {
+    "n": 1,
+    "key": "process",
+    "title": "Welding Process",
+    "subtitle": "MIG or TIG?",
+    "short": "Process",
+    "folder": "01-process",
+    "icon": "⚡"
+  },
+  {
+    "n": 2,
+    "key": "material",
+    "title": "Material",
+    "subtitle": "What material will you weld?",
+    "short": "Material",
+    "folder": "02-material",
+    "icon": "⛓"
+  },
+  {
+    "n": 3,
+    "key": "reach",
+    "title": "Robot Arm Reach",
+    "subtitle": "Which manipulator best fits your work envelope?",
+    "short": "Reach",
+    "folder": "03-reach",
+    "icon": "⤴"
+  },
+  {
+    "n": 4,
+    "key": "amperage",
+    "title": "Power Source Capacity",
+    "subtitle": "350 amp standard, or 500 amp for heavier duty?",
+    "short": "Power",
+    "folder": "04-amperage",
+    "icon": "⚡"
+  },
+  {
+    "n": 5,
+    "key": "cooling",
+    "title": "Torch Cooling",
+    "subtitle": "Gas cooled or water cooled torch?",
+    "short": "Cooling",
+    "folder": "05-cooling",
+    "icon": "❄"
+  },
+  {
+    "n": 6,
+    "key": "conduit",
+    "title": "Power Conduit Routing",
+    "subtitle": "How do you want the power conduit routed?",
+    "short": "Conduit",
+    "folder": "06-conduit",
+    "icon": "⌇"
+  },
+  {
+    "n": 7,
+    "key": "fume",
+    "title": "Fume Extraction",
+    "subtitle": "Integrated fume extraction torch and filter?",
+    "short": "Fume",
+    "folder": "07-fume",
+    "icon": "≋"
+  },
+  {
+    "n": 8,
+    "key": "wire",
+    "title": "Wire Supply",
+    "subtitle": "Wire reel, covered reel, or marathon drum pack?",
+    "short": "Wire",
+    "folder": "08-wire",
+    "icon": "◯"
+  },
+  {
+    "n": 9,
+    "key": "touch",
+    "title": "Touch Sensing",
+    "subtitle": "Need touch sense searching for jig variation?",
+    "short": "Touch",
+    "folder": "09-touch",
+    "icon": "⊙"
+  },
+  {
+    "n": 10,
+    "key": "tables",
+    "title": "Jig Tables",
+    "subtitle": "How many table frames mounted in the cell?",
+    "short": "Tables",
+    "folder": "10-tables",
+    "icon": "▭"
+  },
+  {
+    "n": 11,
+    "key": "guarding",
+    "title": "Guarding Design",
+    "subtitle": "Which guarding configuration suits your workflow?",
+    "short": "Guarding",
+    "folder": "11-guarding",
+    "icon": "⚙"
+  },
+  {
+    "n": 12,
+    "key": "install",
+    "title": "Installation",
+    "subtitle": "Installed by your team or by Orion Automation?",
+    "short": "Install",
+    "folder": null,
+    "icon": "⚒"
+  },
+  {
+    "n": 13,
+    "key": "training",
+    "title": "Training Location",
+    "subtitle": "Training at Orion HQ or at your factory?",
+    "short": "Training",
+    "folder": null,
+    "icon": "⌂"
+  }
+]

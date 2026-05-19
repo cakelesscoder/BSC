@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Base System Configurator · Orion Automation</title>
+<meta name="description" content="Configure a robotic welding cell from Orion Automation Systems — Panasonic robots, integrated power sources, guarding and tooling.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Orion Base System Configurator — single-file standalone
+     Image base URL is configured in IMAGE_BASE below. Set it to
+     your GitHub Pages URL (e.g. https://user.github.io/repo)
+     or leave empty to fall back to relative ./images paths.
+     ============================================================ */
+  :root {
+    --orion-blue: #1470af;
+    --orion-blue-dark: #0f5990;
+    --orion-blue-light: #e8f1f8;
+    --orion-yellow: #f5c421;
+    --ink: #0c1827;
+    --ink-soft: #34465a;
+    --muted: #6b7c91;
+    --line: #d8dfe7;
+    --line-soft: #ecf0f4;
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --card: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(12, 24, 39, 0.04), 0 1px 1px rgba(12, 24, 39, 0.03);
+    --shadow-md: 0 4px 12px rgba(12, 24, 39, 0.06), 0 2px 4px rgba(12, 24, 39, 0.04);
+    --shadow-lg: 0 16px 32px rgba(12, 24, 39, 0.08), 0 4px 8px rgba(12, 24, 39, 0.04);
+    --radius: 4px;
+    --radius-lg: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'DM Sans', 'Manrope', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ---------- Layout ---------- */
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 32px 96px;
+  }
+
+  /* ---------- Header ---------- */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 24px;
+    background: var(--ink);
+    border-radius: var(--radius-lg);
+    margin-bottom: 32px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-logo {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+
+  .brand-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .brand-tag {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+
+  .restart-btn {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    transition: all 0.15s ease;
+  }
+  .restart-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+
+  /* ---------- Title block ---------- */
+  .title-block {
+    margin-bottom: 32px;
+  }
+
+  .title-block .eyebrow {
+    color: var(--orion-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .title-block h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    color: var(--orion-blue);
+  }
+
+  .title-block p {
+    color: var(--ink-soft);
+    font-size: 17px;
+    max-width: 720px;
+    margin: 0;
+  }
+
+  /* ---------- Progress strip ---------- */
+  .progress {
+    margin-bottom: 32px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--line-soft);
+    position: relative;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--orion-blue);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .step-strip {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 0;
+  }
+
+  .step-pill {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 4px;
+    text-align: center;
+    border-right: 1px solid var(--line-soft);
+    transition: all 0.15s ease;
+    font-family: inherit;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .step-pill:last-child { border-right: none; }
+  .step-pill:hover:not(:disabled):not(.active) { background: var(--bg); color: var(--ink); }
+  .step-pill:disabled { cursor: not-allowed; opacity: 0.55; }
+
+  .step-pill.active { background: var(--bg); color: var(--orion-blue); }
+  .step-pill.active .step-num { background: var(--orion-blue); color: white; }
+
+  .step-pill.complete { color: var(--ink); }
+  .step-pill.complete .step-num { background: var(--ink); color: white; }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .step-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* ---------- Step transitions ---------- */
+  .step-content {
+    animation: stepIn 0.35s ease both;
+  }
+  .step-content.slide-back {
+    animation: stepInBack 0.35s ease both;
+  }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes stepInBack {
+    from { opacity: 0; transform: translateX(-40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .welcome.exit {
+    animation: welcomeExit 0.45s ease both;
+  }
+  @keyframes welcomeExit {
+    to { opacity: 0; transform: scale(0.97); }
+  }
+
+  .summary {
+    animation: stepIn 0.4s ease both;
+  }
+
+  /* ---------- Question header ---------- */
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .q-meta { flex: 1; min-width: 0; }
+
+  .q-counter {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .q-counter .q-counter-num { color: var(--orion-blue); }
+
+  .q-title {
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.15;
+    color: var(--orion-blue);
+    margin-bottom: 6px;
+  }
+
+  .q-subtitle {
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .info-toggle {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px 8px 12px;
+    border-radius: var(--radius);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+  .info-toggle:hover { border-color: var(--orion-blue); color: var(--orion-blue); }
+  .info-toggle.open { background: var(--orion-blue); color: white; border-color: var(--orion-blue); }
+
+  .info-panel {
+    background: var(--orion-blue-light);
+    border-left: 3px solid var(--orion-blue);
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+    display: none;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .info-panel.open { display: block; }
+
+  /* ---------- Option grid ---------- */
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .option {
+    border: 2px solid var(--line);
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    width: 100%;
+  }
+  .option:hover {
+    border-color: var(--orion-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .option.selected {
+    border-color: var(--orion-blue);
+    background: var(--orion-blue-light);
+    box-shadow: 0 0 0 3px rgba(20, 112, 175, 0.12);
+  }
+  .option.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .option-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .option-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .option-image img.active { opacity: 1; }
+
+  .option-image-placeholder {
+    color: var(--muted);
+    font-size: 36px;
+    font-weight: 200;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option-image-count {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    background: rgba(12, 24, 39, 0.65);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    cursor: pointer;
+  }
+  .option-image-count:hover {
+    background: rgba(12, 24, 39, 0.85);
+  }
+
+  .option-body {
+    padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .option-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.25;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option-blurb {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .option-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--orion-blue);
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: var(--shadow-sm);
+  }
+  .option.selected .option-check { display: flex; }
+
+  .option-unavailable {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 9px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    border: 1px solid var(--line);
+  }
+
+  /* ---------- Footer nav ---------- */
+  .nav {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .nav-summary {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .nav-summary strong { color: var(--ink); }
+
+  .nav-buttons { display: flex; gap: 12px; }
+
+  .btn {
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a.btn { line-height: 1.2; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover:not(:disabled) { background: var(--bg-soft); color: var(--ink); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--orion-blue);
+    color: white;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--orion-blue-dark); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; background: var(--muted); }
+
+  /* ---------- Summary view (final step) ---------- */
+  .summary {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .code-bar {
+    background: var(--ink);
+    color: white;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', 'DM Sans', monospace;
+  }
+
+  .code-bar-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .code-bar-value {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow-x: auto;
+    flex: 1;
+  }
+
+  .code-bar .btn { flex-shrink: 0; }
+
+  .spec-sheet {
+    columns: 2;
+    column-gap: 32px;
+    margin-top: 20px;
+  }
+
+  .spec-group {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+
+  .spec-group-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+    margin: 0 0 2px 0;
+  }
+
+  .spec-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+    font-size: 13px;
+  }
+
+  .spec-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .spec-thumb-empty {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .spec-label { color: var(--muted); }
+  .spec-value { font-weight: 600; color: var(--ink); text-align: right; margin-left: auto; }
+
+  .config-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: inherit;
+    padding: 4px 8px;
+  }
+  .btn-text:hover { color: var(--ink); }
+
+  @media (max-width: 768px) {
+    .spec-sheet { columns: 1; }
+  }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  .copy-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Welcome screen ---------- */
+  /* --- Welcome: full-viewport dark immersive --- */
+  .app.welcome-mode {
+    max-width: 100%;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .welcome {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-text {
+    padding: 96px 56px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .welcome-text > * {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: welcomeFadeUp 0.7s ease forwards;
+  }
+  .welcome-text > *:nth-child(1) { animation-delay: 0.15s; }
+  .welcome-text > *:nth-child(2) { animation-delay: 0.3s; }
+  .welcome-text > *:nth-child(3) { animation-delay: 0.45s; }
+  .welcome-text > *:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes welcomeFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome h1 {
+    font-size: clamp(30px, 4.5vw, 48px);
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.08;
+  }
+
+  .welcome p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 480px;
+    margin: 0 0 36px;
+    line-height: 1.65;
+  }
+
+  .welcome .stats {
+    display: flex;
+    gap: 32px;
+    margin: 0 0 40px;
+    flex-wrap: wrap;
+  }
+
+  .welcome .stat {
+    text-align: left;
+  }
+
+  .welcome .stat .num {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--orion-blue);
+    line-height: 1;
+  }
+
+  .welcome .stat .lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .welcome .btn-primary {
+    align-self: flex-start;
+    font-size: 16px;
+    padding: 14px 32px;
+  }
+
+  .welcome-hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    transform: scale(1);
+  }
+
+  .welcome-hero img.active {
+    opacity: 1;
+    animation: kenBurns 8s ease forwards;
+  }
+
+  @keyframes kenBurns {
+    from { transform: scale(1); }
+    to   { transform: scale(1.06); }
+  }
+
+  .welcome-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--ink) 0%, rgba(12,24,39,0.3) 50%, transparent 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .welcome-mode .header {
+    background: transparent;
+    border-radius: 0;
+    padding: 24px 32px;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  /* ---------- Modal lightbox for image gallery ---------- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 24, 39, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 32px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: var(--shadow-lg);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border-radius: 50%;
+    font-size: 22px;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 28px;
+    border-radius: 50%;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox-nav.prev { left: 24px; }
+  .lightbox-nav.next { right: 24px; }
+  .lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 13px;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+
+  /* ---------- View image gallery on selected option ---------- */
+  .gallery-strip {
+    display: flex;
+    gap: 8px;
+    padding: 12px 18px 16px;
+    overflow-x: auto;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+  }
+  .gallery-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    flex-shrink: 0;
+    cursor: pointer;
+    background: white;
+    padding: 0;
+  }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery-thumb:hover { border-color: var(--orion-blue); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .app { padding: 20px 16px 80px; }
+    .step-strip { grid-template-columns: repeat(7, 1fr); }
+    .step-strip .step-pill:nth-child(n+8) { display: none; }
+    .step-pill .step-label { font-size: 10px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .brand-divider { display: none; }
+    .welcome { grid-template-columns: 1fr; }
+    .welcome-text { padding: 36px 24px; }
+    .welcome-hero { min-height: 300px; }
+    .q-header { flex-direction: column; gap: 16px; }
+    .info-toggle { align-self: flex-start; }
+    .spec-sheet { columns: 1; }
+  }
+
+  @media (max-width: 540px) {
+    .options { grid-template-columns: 1fr; }
+    .step-strip { display: none; }
+    .progress { padding: 10px 14px; }
+    .progress::after {
+      content: attr(data-progress);
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+  }
+
+  /* ---------- Print styles for the summary ---------- */
+  @media print {
+    .progress, .nav, .config-actions, .info-toggle, .restart-btn { display: none !important; }
+    .header { background: var(--ink) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body { background: white; }
+    .app { max-width: 100%; padding: 0; }
+    .summary { border: none; padding: 0; background: white; box-shadow: none; }
+    .code-bar { background: white !important; border: 2px solid var(--ink) !important; color: var(--ink) !important; }
+    .code-bar-label { color: var(--muted) !important; }
+    .spec-sheet { columns: 2 !important; }
+    .spec-thumb { width: 32px; height: 32px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .spec-thumb-empty { display: none; }
+    .title-block p { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lb-close" aria-label="Close">×</button>
+  <button class="lightbox-nav prev" id="lb-prev" aria-label="Previous">‹</button>
+  <img id="lb-img" alt="">
+  <button class="lightbox-nav next" id="lb-next" aria-label="Next">›</button>
+  <div class="lightbox-counter" id="lb-counter"></div>
+</div>
+
+<div class="copy-toast" id="toast">Copied to clipboard</div>
+
+<script>
+/* ============================================================
+   CONFIGURATION
+   Set IMAGE_BASE to your hosted images URL when deploying.
+   For GitHub Pages it will look like:
+     https://your-username.github.io/orion-bsc/images
+   Leave empty for local testing with a sibling /images folder.
+   ============================================================ */
+const IMAGE_BASE = '';   // e.g. 'https://lachlan.github.io/orion-bsc/images'
+
+// Image-load error fallback. Called from inline onerror handlers.
+window.handleImgError = function(img, icon) {
+  const parent = img.parentElement;
+  if (!parent) return;
+  // If there are sibling images that loaded fine, just remove this broken one
+  const siblings = parent.querySelectorAll('img');
+  if (siblings.length > 1) {
+    const wasActive = img.classList.contains('active');
+    img.remove();
+    if (wasActive) {
+      const remaining = parent.querySelector('img');
+      if (remaining) remaining.classList.add('active');
+    }
+  } else {
+    parent.innerHTML = '<div class="option-image-placeholder">' + (icon || '—') + '</div>';
+  }
+};
+
+// All static configurator data — generated by build.py from /data/*.json
+/* @@DATA_START@@ */ const DATA = {}; /* @@DATA_END@@ */
+
+// ----------------------------------------------------------------
+// Image URL helper
+// ----------------------------------------------------------------
+function imageUrl(qkey, filename) {
+  const q = DATA.questions.find(x => x.key === qkey);
+  if (!q || !q.folder) return '';
+  const base = IMAGE_BASE ? IMAGE_BASE.replace(/\/$/, '') : './images';
+  return `${base}/${q.folder}/${filename.toLowerCase()}`;
+}
+
+function getImagesForOption(qkey, optionCode) {
+  const byCode = DATA.images[qkey] || {};
+  // Touch sensing has a generic image instead of per-option
+  if (qkey === 'touch' && byCode._generic) {
+    return byCode._generic;
+  }
+  return byCode[optionCode] || [];
+}
+
+// ----------------------------------------------------------------
+// Compact config code encoding
+// Each question maps to a single mnemonic character.
+// Grouped with hyphens: Robot&Process - Power&Torch - Consumables - Workholding - Deployment
+// ----------------------------------------------------------------
+const CODE_MAP = {
+  process:  { '101': 'M', '102': 'T' },
+  material: { '151': 'C', '152': 'S', '153': 'A', '154': 'G', '155': 'T' },
+  reach:    { '201': '1', '202': '2', '203': '3', '204': '4', '205': '5' },
+  amperage: { '251': '3', '252': '5' },
+  cooling:  { '301': 'G', '302': 'W' },
+  conduit:  { '351': 'S', '352': 'T', '353': 'E' },
+  fume:     { '401': 'F', '402': 'N' },
+  wire:     { '451': 'R', '452': 'C', '453': 'D' },
+  touch:    { '501': 'Y', '502': 'N' },
+  tables:   { '551': '1', '552': '2' },
+  guarding: { '651': '1', '652': '2', '653': '3', '654': '4', '655': '5', '656': '6' },
+  install:  { '701': 'C', '702': 'O' },
+  training: { '751': 'V', '752': 'S', '753': 'N' },
+};
+
+// Groups for segmented code display and spec sheet sections
+const SPEC_GROUPS = [
+  { title: 'Robot & Process',        keys: ['process', 'material', 'reach'] },
+  { title: 'Power & Torch',          keys: ['amperage', 'cooling', 'conduit'] },
+  { title: 'Consumables & Features', keys: ['fume', 'wire', 'touch'] },
+  { title: 'Workholding',            keys: ['tables'] },
+  { title: 'Deployment',             keys: ['guarding', 'install', 'training'] },
+];
+
+function buildCompactCode(selections) {
+  return SPEC_GROUPS.map(g =>
+    g.keys.map(k => {
+      const sel = selections[k];
+      return sel && CODE_MAP[k][sel] ? CODE_MAP[k][sel] : '?';
+    }).join('')
+  ).join('-');
+}
+
+// ----------------------------------------------------------------
+// Validity engine
+// A rule = [thisCode, prereqsArray] where prereqs may contain null wildcards
+// An option O is valid for selections S if at least one of O's rules
+// matches: for every position i where rule[i] !== null, S[i] === rule[i].
+// If NO option matches, fall back to showing all options (avoid dead ends).
+// ----------------------------------------------------------------
+function getValidOptions(qkey, selections) {
+  const order = DATA.order[qkey] || Object.keys(DATA.options[qkey] || {});
+  const allOptions = Object.keys(DATA.options[qkey] || {});
+  const rules = DATA.rules[qkey] || [];
+
+  // If the rule set doesn't enumerate every option, the rules are illustrative
+  // (the spreadsheet author didn't fill in every leaf for install/training/guarding).
+  // In that case, show all options — the rules can't reliably gate.
+  const codesInRules = new Set(rules.map(r => r[0]));
+  const ruleSetIsComplete = allOptions.every(c => codesInRules.has(c));
+  if (!ruleSetIsComplete) {
+    return order.slice();
+  }
+
+  // selections is { process: '101', material: '151', ... } — convert to ordered array
+  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding','install','training'];
+  const qIdx = selOrder.indexOf(qkey);
+  const prior = selOrder.slice(0, qIdx).map(k => selections[k] || null);
+
+  const valid = new Set();
+  for (const rule of rules) {
+    const [thisCode, prereqs] = rule;
+    let ok = true;
+    for (let i = 0; i < prereqs.length; i++) {
+      if (prereqs[i] !== null && prior[i] !== null && prior[i] !== prereqs[i]) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) valid.add(thisCode);
+  }
+
+  // If nothing matches (sparse rules don't cover this path), allow everything
+  if (valid.size === 0) {
+    return order.slice();
+  }
+  // Return ordered list of valid options that exist in our options table
+  return order.filter(c => valid.has(c) && DATA.options[qkey][c]);
+}
+
+// ----------------------------------------------------------------
+// State
+// ----------------------------------------------------------------
+const state = {
+  step: -1,         // -1 = welcome, 0..13 = questions, 14 = summary
+  selections: {},   // { process: '101', material: '151', ... }
+  infoOpen: false,
+};
+
+const QUESTION_KEYS = DATA.questions.map(q => q.key);
+
+// Session persistence — survive refresh / accidental tab close
+function saveSession() {
+  try { sessionStorage.setItem('bsc', JSON.stringify({ step: state.step, selections: state.selections })); } catch(e) {}
+}
+function loadSession() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem('bsc'));
+    if (s && s.selections && Object.keys(s.selections).length) {
+      state.step = s.step;
+      state.selections = s.selections;
+    }
+  } catch(e) {}
+}
+// Reverse CODE_MAP for decoding shared links
+const CODE_MAP_REVERSE = {};
+for (const [qkey, map] of Object.entries(CODE_MAP)) {
+  CODE_MAP_REVERSE[qkey] = {};
+  for (const [optCode, ch] of Object.entries(map)) {
+    CODE_MAP_REVERSE[qkey][ch] = optCode;
+  }
+}
+
+function loadFromHash() {
+  const hash = location.hash.slice(1);
+  if (!hash || !/^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{1,2}-[A-Z0-9]{3}$/i.test(hash)) return false;
+  const groups = hash.toUpperCase().split('-');
+  const chars = groups.join('');
+  if (chars.length !== QUESTION_KEYS.length) return false;
+  const selections = {};
+  for (let i = 0; i < QUESTION_KEYS.length; i++) {
+    const qkey = QUESTION_KEYS[i];
+    const ch = chars[i];
+    const optCode = (CODE_MAP_REVERSE[qkey] || {})[ch];
+    if (!optCode) return false;
+    selections[qkey] = optCode;
+  }
+  state.selections = selections;
+  state.step = QUESTION_KEYS.length; // go straight to summary
+  return true;
+}
+
+// Load state: URL hash takes priority, then sessionStorage
+if (!loadFromHash()) {
+  loadSession();
+}
+
+// ----------------------------------------------------------------
+// Render
+// ----------------------------------------------------------------
+const $ = id => document.getElementById(id);
+
+let prevStep = -1;
+function render() {
+  saveSession();
+  if (heroTimer) { clearInterval(heroTimer); heroTimer = null; }
+  if (state.step < QUESTION_KEYS.length && location.hash) history.replaceState(null, '', location.pathname);
+  const app = document.getElementById('app');
+  const direction = state.step > prevStep ? 'forward' : 'back';
+  prevStep = state.step;
+  if (state.step === -1) {
+    app.classList.add('welcome-mode');
+    app.innerHTML = renderWelcome();
+    bindWelcome();
+    requestAnimationFrame(postIframeHeight);
+    return;
+  }
+  app.classList.remove('welcome-mode');
+  if (state.step >= QUESTION_KEYS.length) {
+    app.innerHTML = renderHeader() + renderSummary();
+    bindCommon();
+    bindSummary();
+    requestAnimationFrame(postIframeHeight);
+    return;
+  }
+  const slideClass = direction === 'back' ? 'slide-back' : '';
+  app.innerHTML =
+    renderHeader() +
+    renderTitleBlock() +
+    renderProgress() +
+    `<div class="step-content ${slideClass}">` +
+    renderQuestion(state.step) +
+    renderNav() +
+    `</div>`;
+  bindCommon();
+  bindQuestion();
+  bindSlideshow();
+  requestAnimationFrame(postIframeHeight);
+}
+
+function renderWelcome() {
+  const heroBase = IMAGE_BASE ? IMAGE_BASE.replace(/\/$/, '') : './images';
+  const heroDir = `${heroBase}/hero`;
+  return `
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="./images/logo.png" alt="Orion Automation">
+        <div class="brand-divider"></div>
+        <div class="brand-tag">Base System Configurator</div>
+      </div>
+    </div>
+    <div class="welcome">
+      <div class="welcome-text">
+        <h1>Configure your robotic welding cell</h1>
+        <p>Walk through 13 design decisions and we'll generate a complete specification for your Panasonic-based welding system. Built around our standard base platform — proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.</p>
+        <div class="stats">
+          <div class="stat"><div class="num">13</div><div class="lbl">Steps</div></div>
+          <div class="stat"><div class="num">~5</div><div class="lbl">Minutes</div></div>
+        </div>
+        <button class="btn btn-primary" id="start-btn">
+          Start configuring →
+        </button>
+      </div>
+      <div class="welcome-hero" id="welcome-hero">
+        <img src="${heroDir}/01.jpg" class="active" alt="">
+        <img src="${heroDir}/02.jpg" alt="">
+        <img src="${heroDir}/03.jpg" alt="">
+        <img src="${heroDir}/04.jpg" alt="">
+      </div>
+    </div>
+  `;
+}
+
+function renderHeader() {
+  return `
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="./images/logo.png" alt="Orion Automation">
+        <div class="brand-divider"></div>
+        <div class="brand-tag">Base System Configurator</div>
+      </div>
+      <button class="restart-btn" id="restart-btn">↻ Start over</button>
+    </div>
+  `;
+}
+
+function renderTitleBlock() {
+  if (state.step !== 0) return '';
+  return `
+    <div class="title-block">
+      <div class="eyebrow">Robotic welding cell · base system</div>
+      <h1>Configure your specification</h1>
+      <p>Each step adapts to your earlier choices. You can jump back to any completed step to revise.</p>
+    </div>
+  `;
+}
+
+function renderProgress() {
+  const total = QUESTION_KEYS.length;
+  const completed = Object.keys(state.selections).length;
+  const pct = Math.round((completed / total) * 100);
+  let pills = '';
+  for (let i = 0; i < total; i++) {
+    const q = DATA.questions[i];
+    const isComplete = state.selections[q.key];
+    const isActive = state.step === i;
+    const isReachable = i <= completed;  // can jump to any completed step or the next one
+    const cls = (isActive ? 'active' : '') + ' ' + (isComplete && !isActive ? 'complete' : '');
+    pills += `
+      <button class="step-pill ${cls}" data-step="${i}" ${!isReachable ? 'disabled' : ''}>
+        <span class="step-num">${i+1}</span>
+        <span class="step-label">${q.short}</span>
+      </button>
+    `;
+  }
+  return `
+    <div class="progress" data-progress="Step ${state.step+1} of ${total} · ${pct}% complete">
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width: ${pct}%"></div></div>
+      <div class="step-strip">${pills}</div>
+    </div>
+  `;
+}
+
+function explainDisabled(qkey, optionCode, selections) {
+  // Find which prior selection is incompatible with this option's rules.
+  const rules = (DATA.rules[qkey] || []).filter(r => r[0] === optionCode);
+  if (rules.length === 0) return '';
+  const selOrder = ['process','material','reach','amperage','cooling','conduit','fume','wire','touch','tables','guarding','install','training'];
+  const prior = selOrder.map(k => selections[k] || null);
+  // For each rule, find the first prior selection that conflicts
+  // and report which question it relates to.
+  const conflicts = new Set();
+  for (const [, prereqs] of rules) {
+    for (let i = 0; i < prereqs.length; i++) {
+      if (prereqs[i] !== null && prior[i] !== null && prior[i] !== prereqs[i]) {
+        conflicts.add(selOrder[i]);
+        break;
+      }
+    }
+  }
+  if (conflicts.size === 0) return '';
+  const titleByKey = {};
+  for (const q of DATA.questions) titleByKey[q.key] = q.short;
+  const names = [...conflicts].map(k => titleByKey[k] || k);
+  return 'Not available with your ' + names.join(' / ') + ' selection';
+}
+
+function renderQuestion(stepIdx) {
+  const q = DATA.questions[stepIdx];
+  const validCodes = getValidOptions(q.key, state.selections);
+  const allCodes = DATA.order[q.key] || Object.keys(DATA.options[q.key] || {});
+  const selected = state.selections[q.key];
+
+  let cards = '';
+  for (const code of allCodes) {
+    const label = DATA.options[q.key][code];
+    if (!label) continue;
+    const isValid = validCodes.includes(code);
+    const isSelected = selected === code;
+    const blurb = DATA.blurbs[code] || '';
+    const imgs = getImagesForOption(q.key, code);
+    let imgHtml = '';
+    if (imgs.length > 0) {
+      imgHtml = `<img src="${imageUrl(q.key, imgs[0])}"
+        data-src="${imageUrl(q.key, imgs[0])}"
+        alt="${label}" class="active"
+        onerror="window.handleImgError(this, '${q.icon}')">`;
+      for (let ii = 1; ii < imgs.length; ii++) {
+        imgHtml += `<img data-src="${imageUrl(q.key, imgs[ii])}"
+          alt="${label}" class="">`;
+      }
+      if (imgs.length > 1) {
+        imgHtml += `<span class="option-image-count" data-lb-qkey="${q.key}" data-lb-code="${code}">${imgs.length} photos</span>`;
+      }
+    } else {
+      imgHtml = `<div class="option-image-placeholder">${q.icon}</div>`;
+    }
+
+    let unavailableBadge = '';
+    if (!isValid) {
+      const reason = explainDisabled(q.key, code, state.selections);
+      unavailableBadge = `<div class="option-unavailable" title="${reason}">Not available</div>`;
+    }
+
+    cards += `
+      <button class="option ${isSelected ? 'selected' : ''} ${!isValid ? 'disabled' : ''}"
+              data-code="${code}" ${!isValid ? 'disabled' : ''}
+              ${!isValid ? `title="${explainDisabled(q.key, code, state.selections)}"` : ''}
+              style="position: relative;">
+        <div class="option-check">✓</div>
+        ${unavailableBadge}
+        <div class="option-image">${imgHtml}</div>
+        <div class="option-body">
+          <div class="option-title">${label}</div>
+          <p class="option-blurb">${blurb}</p>
+        </div>
+      </button>
+    `;
+  }
+
+  const helpText = DATA.help[q.key] || '';
+
+  return `
+    <div class="q-header">
+      <div class="q-meta">
+        <div class="q-counter">Step <span class="q-counter-num">${stepIdx+1}</span> of ${QUESTION_KEYS.length} · ${q.short}</div>
+        <h2 class="q-title">${q.title}</h2>
+        <p class="q-subtitle">${q.subtitle}</p>
+      </div>
+      <button class="info-toggle ${state.infoOpen ? 'open' : ''}" id="info-toggle">
+        <span>${state.infoOpen ? '×' : 'i'}</span>
+        ${state.infoOpen ? 'Hide info' : 'More info'}
+      </button>
+    </div>
+    <div class="info-panel ${state.infoOpen ? 'open' : ''}">${helpText}</div>
+    <div class="options">${cards}</div>
+  `;
+}
+
+function renderNav() {
+  const completed = Object.keys(state.selections).length;
+  const canBack = state.step > 0;
+  const canNext = state.selections[QUESTION_KEYS[state.step]];
+  const isLastQuestion = state.step === QUESTION_KEYS.length - 1;
+  return `
+    <div class="nav">
+      <div class="nav-summary">
+        <strong>${completed}</strong> of ${QUESTION_KEYS.length} selections made
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" id="back-btn" ${canBack ? '' : 'disabled'}>← Back</button>
+        <button class="btn btn-primary" id="next-btn" ${canNext ? '' : 'disabled'}>
+          ${isLastQuestion ? 'Review configuration →' : 'Continue →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderSummary() {
+  const codeString = buildCompactCode(state.selections);
+
+  let specHtml = '';
+  for (const group of SPEC_GROUPS) {
+    let rows = '';
+    for (const k of group.keys) {
+      const q = DATA.questions.find(x => x.key === k);
+      const code = state.selections[k];
+      const label = code ? DATA.options[k][code] : '—';
+      const imgs = code ? getImagesForOption(k, code) : [];
+      const thumbHtml = imgs.length
+        ? `<img class="spec-thumb" src="${imageUrl(k, imgs[0])}" alt="">`
+        : `<span class="spec-thumb-empty">—</span>`;
+      rows += `<div class="spec-row">${thumbHtml}<span class="spec-label">${q.short}</span><span class="spec-value">${label}</span></div>`;
+    }
+    specHtml += `<div class="spec-group"><h4 class="spec-group-title">${group.title}</h4>${rows}</div>`;
+  }
+
+  // Set URL hash for shareable link
+  history.replaceState(null, '', '#' + codeString);
+
+  return `
+    <div class="title-block">
+      <div class="eyebrow">Configuration complete</div>
+      <h1>Your base system specification</h1>
+      <p>Send this code to Orion Automation for a quote.</p>
+    </div>
+    <div class="summary">
+      <div class="code-bar">
+        <span class="code-bar-label">Config</span>
+        <span class="code-bar-value" id="config-code">${codeString}</span>
+        <button class="btn btn-primary" id="copy-code">Copy</button>
+      </div>
+      <div class="spec-sheet">${specHtml}</div>
+      <div class="config-actions">
+        <a class="btn btn-primary" id="email-quote" href="#">Email for quote</a>
+        <button class="btn btn-secondary" id="share-link">Share link</button>
+        <button class="btn btn-secondary" id="print-spec">Print</button>
+        <button class="btn-text" id="restart-summary">Start over</button>
+      </div>
+    </div>
+  `;
+}
+
+// ----------------------------------------------------------------
+// Bind / event handlers
+// ----------------------------------------------------------------
+let heroTimer = null;
+function bindWelcome() {
+  $('start-btn').addEventListener('click', () => {
+    const welcome = document.querySelector('.welcome');
+    if (welcome) {
+      welcome.classList.add('exit');
+      welcome.addEventListener('animationend', () => {
+        state.step = 0;
+        render();
+      }, { once: true });
+    } else {
+      state.step = 0;
+      render();
+    }
+  });
+  // Hero slideshow
+  const hero = $('welcome-hero');
+  if (hero) {
+    const imgs = hero.querySelectorAll('img');
+    if (imgs.length > 1) {
+      let idx = 0;
+      heroTimer = setInterval(() => {
+        imgs[idx].classList.remove('active');
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('active');
+      }, 4000);
+    }
+  }
+}
+
+function bindCommon() {
+  const r = $('restart-btn');
+  if (r) r.addEventListener('click', resetAll);
+}
+
+function bindQuestion() {
+  // Step pill jumps
+  document.querySelectorAll('.step-pill:not(:disabled)').forEach(b => {
+    b.addEventListener('click', () => {
+      state.step = Number(b.dataset.step);
+      state.infoOpen = false;
+      render();
+    });
+  });
+  // Option clicks — select and auto-advance after brief visual confirmation
+  document.querySelectorAll('.option:not([disabled])').forEach(b => {
+    b.addEventListener('click', () => {
+      const qkey = QUESTION_KEYS[state.step];
+      const code = b.dataset.code;
+      state.selections[qkey] = code;
+      cascadeInvalidate();
+      // Show selection visually
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      b.classList.add('selected');
+      // Auto-advance after a moment
+      setTimeout(() => {
+        state.step += 1;
+        state.infoOpen = false;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 350);
+    });
+  });
+  // Info toggle
+  $('info-toggle').addEventListener('click', () => {
+    state.infoOpen = !state.infoOpen;
+    render();
+  });
+  // Nav
+  $('back-btn').addEventListener('click', () => {
+    if (state.step > 0) { state.step -= 1; state.infoOpen = false; render(); }
+  });
+  $('next-btn').addEventListener('click', () => {
+    state.step += 1;
+    state.infoOpen = false;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// Slideshow on hover — cycle images every 2s while hovering an option card
+const slideshowTimers = new Map();
+
+function bindSlideshow() {
+  // "N photos" badge opens lightbox
+  document.querySelectorAll('.option-image-count[data-lb-qkey]').forEach(badge => {
+    badge.addEventListener('click', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      const qkey = badge.dataset.lbQkey;
+      const code = badge.dataset.lbCode;
+      const imgs = getImagesForOption(qkey, code);
+      if (imgs.length) openLightbox(qkey, imgs);
+    });
+  });
+
+  document.querySelectorAll('.option').forEach(card => {
+    const imgContainer = card.querySelector('.option-image');
+    if (!imgContainer || imgContainer.querySelectorAll('img').length < 2) return;
+
+    card.addEventListener('mouseenter', () => {
+      const imgs = imgContainer.querySelectorAll('img');
+      if (imgs.length < 2) return;
+      // Lazy-load all images on first hover
+      imgs.forEach(img => {
+        if (img.dataset.src && !img.src) img.src = img.dataset.src;
+      });
+      let idx = 0;
+      const timer = setInterval(() => {
+        const live = imgContainer.querySelectorAll('img');
+        if (live.length < 2) { clearInterval(timer); return; }
+        live.forEach(i => i.classList.remove('active'));
+        idx = (idx + 1) % live.length;
+        live[idx].classList.add('active');
+      }, 2500);
+      slideshowTimers.set(card, timer);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      const timer = slideshowTimers.get(card);
+      if (timer) { clearInterval(timer); slideshowTimers.delete(card); }
+      const imgs = imgContainer.querySelectorAll('img');
+      imgs.forEach((img, i) => img.classList.toggle('active', i === 0));
+    });
+  });
+}
+
+function bindSummary() {
+  $('copy-code').addEventListener('click', () => {
+    const code = $('config-code').textContent;
+    navigator.clipboard.writeText(code).then(showToast);
+  });
+  $('share-link').addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href).then(() => {
+      showToast('Link copied to clipboard');
+    });
+  });
+  $('print-spec').addEventListener('click', () => window.print());
+  $('restart-summary').addEventListener('click', resetAll);
+  $('email-quote').addEventListener('click', e => {
+    e.preventDefault();
+    const code = $('config-code').textContent;
+    const lines = DATA.questions.map(q => {
+      const c = state.selections[q.key];
+      const lbl = c ? DATA.options[q.key][c] : '—';
+      return `  ${q.short.padEnd(12)} ${c || '---'}  ${lbl}`;
+    }).join('%0D%0A');
+    const subject = encodeURIComponent('Base System Configuration · ' + code);
+    const body = encodeURIComponent('Hello,\n\nI have configured a base system with the following specification:\n\nConfiguration code: ' + code + '\n\n').replace(/%0A/g,'%0D%0A')
+      + lines
+      + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  });
+}
+
+// When a selection changes, downstream selections may no longer satisfy rules.
+// Walk forward from the changed step and clear any selection that's no longer valid.
+function cascadeInvalidate() {
+  for (let i = state.step + 1; i < QUESTION_KEYS.length; i++) {
+    const k = QUESTION_KEYS[i];
+    const sel = state.selections[k];
+    if (!sel) continue;
+    const valid = getValidOptions(k, state.selections);
+    if (!valid.includes(sel)) {
+      delete state.selections[k];
+    }
+  }
+}
+
+function resetAll() {
+  if (!Object.keys(state.selections).length || confirm('Start over? Your current configuration will be cleared.')) {
+    state.step = -1;
+    state.selections = {};
+    state.infoOpen = false;
+    try { sessionStorage.removeItem('bsc'); } catch(e) {}
+    render();
+  }
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  if (msg) t.textContent = msg;
+  else t.textContent = 'Copied to clipboard';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// When embedded in an iframe (e.g. Squarespace), post our content height
+// to the parent so it can resize the iframe and avoid an inner scrollbar.
+function postIframeHeight() {
+  if (window.parent === window) return; // not in iframe
+  try {
+    const h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    window.parent.postMessage({ type: 'orion-bsc-resize', height: h }, '*');
+  } catch (e) { /* parent on different origin, ignore */ }
+}
+
+// Lightbox
+let lbState = { qkey: '', imgs: [], idx: 0 };
+
+function openLightbox(qkey, imgs) {
+  // Preload all images
+  lbState = { qkey, imgs, idx: 0 };
+  updateLightbox();
+  $('lightbox').classList.add('open');
+}
+
+function updateLightbox() {
+  $('lb-img').src = imageUrl(lbState.qkey, lbState.imgs[lbState.idx]);
+  $('lb-counter').textContent = (lbState.idx + 1) + ' / ' + lbState.imgs.length;
+  $('lb-prev').style.display = lbState.imgs.length > 1 ? '' : 'none';
+  $('lb-next').style.display = lbState.imgs.length > 1 ? '' : 'none';
+}
+
+function closeLightbox() { $('lightbox').classList.remove('open'); }
+
+$('lb-close').addEventListener('click', closeLightbox);
+$('lb-prev').addEventListener('click', () => {
+  lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length;
+  updateLightbox();
+});
+$('lb-next').addEventListener('click', () => {
+  lbState.idx = (lbState.idx + 1) % lbState.imgs.length;
+  updateLightbox();
+});
+$('lightbox').addEventListener('click', e => {
+  if (e.target === $('lightbox')) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (!$('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') { lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length; updateLightbox(); }
+  if (e.key === 'ArrowRight') { lbState.idx = (lbState.idx + 1) % lbState.imgs.length; updateLightbox(); }
+});
+
+// Init
+render();
+</script>
+
+</body>
+</html>

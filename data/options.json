@@ -1,0 +1,67 @@
+{
+  "process": {
+    "101": "MIG",
+    "102": "TIG"
+  },
+  "material": {
+    "151": "Mild Steel",
+    "152": "Stainless Steel",
+    "153": "Aluminium",
+    "154": "Galvanised steel",
+    "155": "Titanium"
+  },
+  "reach": {
+    "201": "TM1400",
+    "202": "TM1800",
+    "203": "TM2000",
+    "204": "TL1800",
+    "205": "TL2000"
+  },
+  "amperage": {
+    "251": "350 Amp",
+    "252": "500 Amp"
+  },
+  "cooling": {
+    "301": "Gas Cooled",
+    "302": "Water Cooled"
+  },
+  "conduit": {
+    "351": "Separate",
+    "352": "Through Arm",
+    "353": "External"
+  },
+  "fume": {
+    "401": "With Fume Extraction",
+    "402": "No Fume Extraction"
+  },
+  "wire": {
+    "451": "Wire reel",
+    "452": "Wire Reel with cover",
+    "453": "Drum Pack"
+  },
+  "touch": {
+    "501": "Require Touch Sensing",
+    "502": "Not required"
+  },
+  "tables": {
+    "551": "1 x Jig Table Frame",
+    "552": "2 x Jig Table Frames"
+  },
+  "guarding": {
+    "651": "Full Guard, Posts & Panels - Light Curtain 1 Table with panel on frame",
+    "652": "Full Guard, Posts & Panels - Light Curtain 1 Table as two parallel walls",
+    "653": "Full Guard, Posts & Panels - Light Curtain 2 Tables with panel on frame",
+    "654": "Full Guard, Posts & Panels - Light Curtain 2 Tables as two parallel walls",
+    "655": "2 Posts - Light Curtain 1 Table",
+    "656": "2 Posts - Light Curtain 2 Tables"
+  },
+  "install": {
+    "701": "Installation by customer",
+    "702": "Installation by Orion Automation"
+  },
+  "training": {
+    "751": "At Orion VIC",
+    "752": "At Customer site",
+    "753": "No training required as not first system"
+  }
+}

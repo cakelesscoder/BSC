@@ -1,0 +1,68 @@
+<!--
+  ============================================================
+  Orion Base System Configurator — Squarespace embed snippet
+  ============================================================
+  HOW TO USE:
+    1. In Squarespace, add a Code Block to the page where you
+       want the configurator to appear.
+    2. Paste the entire contents of this file into that block.
+    3. Save and preview. The configurator loads inside the block
+       and auto-resizes to avoid an inner scrollbar.
+
+  BEFORE PASTING — replace the two placeholders:
+    USERNAME  →  your GitHub username
+    REPO      →  your repository name  (e.g. orion-bsc)
+
+  WHAT THE RESIZE MECHANISM DOES:
+    The configurator sends a postMessage on every step change
+    with its current content height. The script below catches
+    those messages and updates the iframe height accordingly,
+    so the Squarespace page never shows a scroll bar inside
+    the embed block.
+
+  CLIPBOARD PERMISSION:
+    allow="clipboard-write" on the iframe is required so the
+    copy-to-clipboard button on the summary screen works when
+    the configurator is loaded from a different domain.
+  ============================================================
+-->
+
+<style>
+  #orion-bsc-frame {
+    display: block;
+    width: 100%;
+    min-height: 640px;   /* prevents layout collapse while the configurator loads */
+    border: none;
+    overflow: hidden;
+  }
+</style>
+
+<iframe
+  id="orion-bsc-frame"
+  src="https://cakelesscoder.github.io/Base-System-Configurator/"
+  title="Orion Base System Configurator"
+  loading="lazy"
+  allow="clipboard-write"
+></iframe>
+
+<script>
+(function () {
+  // Only accept resize messages from the configurator's origin.
+  // Update this if you move the configurator to a different host.
+  var ALLOWED_ORIGIN = 'https://cakelesscoder.github.io';
+
+  var frame = document.getElementById('orion-bsc-frame');
+
+  window.addEventListener('message', function (event) {
+    if (event.origin !== ALLOWED_ORIGIN) return;
+
+    var data = event.data;
+    if (!data || data.type !== 'orion-bsc-resize') return;
+
+    var h = parseInt(data.height, 10);
+    if (!isNaN(h) && h > 0) {
+      frame.style.height = h + 'px';
+    }
+  });
+})();
+</script>
