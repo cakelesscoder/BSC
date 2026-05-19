@@ -1,15 +1,15 @@
 {
-  "process": "MIG (gas metal arc) is fastest for production volume. TIG produces precise, low-distortion welds — ideal for stainless, aluminium and titanium where appearance and integrity are critical.",
+  "process": "MIG (gas metal arc) is fastest for production volume. TIG produces precise, low-distortion welds - ideal for stainless, aluminium and titanium where appearance and integrity are critical.",
   "material": "Different materials need different power source characteristics, wire types and shielding gas. Selecting the right material here ensures the rest of the configuration is optimised for your work.",
   "reach": "Robot arm reach determines the maximum work envelope. Larger reach handles bigger parts but takes more floor space. The TM series is hollow wrist; the TL series offers extended reach for long parts.",
   "amperage": "350 amp suits most general fabrication up to ~12 mm steel. Choose 500 amp if you regularly weld heavier sections, run high-deposition single-pass welds, or use larger wire diameters.",
-  "cooling": "Gas cooled torches are simpler and lower-maintenance, suited to lighter duty cycles. Water cooled torches handle continuous high amperage without overheating — essential for production environments running 60 %+ duty cycle.",
+  "cooling": "Gas cooled torches are simpler and lower-maintenance, suited to lighter duty cycles. Water cooled torches handle continuous high amperage without overheating - essential for production environments running 60 %+ duty cycle.",
   "conduit": "Separate routing is the lowest-cost standard option. Through-arm routing keeps cables clear of the weld zone and reduces snag risk. External routing is required for some specific robot/torch combinations.",
   "fume": "Integrated fume extraction draws weld fume directly at the torch nozzle, dramatically improving operator safety and reducing facility ventilation load. Specify \"no extraction\" only if you have a strong external capture system.",
   "wire": "Standard wire reels (15 kg) are the lowest-cost option but require more frequent changeover. Covered reels protect the wire from contamination. Marathon drum packs (200–300 kg) maximise uptime in high-volume production.",
   "touch": "Touch sensing lets the robot probe the workpiece to find the actual joint location, compensating for jig and part-to-part variation. Recommended whenever your part tolerances exceed ±1 mm.",
-  "tables": "A single table is the most compact option. Two tables enable a load/unload cycle where the operator prepares the next part while the robot welds — significantly increasing arc-on time.",
+  "tables": "A single table is the most compact option. Two tables enable a load/unload cycle where the operator prepares the next part while the robot welds - significantly increasing arc-on time.",
   "guarding": "Full panel guarding with a sliding door provides the highest containment for spatter and arc flash. 2-post light curtain configurations save space and cost but require strict procedural control.",
   "install": "Orion Automation installation includes mechanical setup, electrical commissioning, calibration and first-weld validation. Customer-led installation is supported with full documentation and remote technical assistance.",
-  "training": "On-site training at our Melbourne facility uses dedicated training cells with no production pressure. On-site training at your factory uses your actual cell, jigs and parts — typically required after major changes."
+  "training": "On-site training at our Melbourne facility uses dedicated training cells with no production pressure. On-site training at your factory uses your actual cell, jigs and parts - typically required after major changes."
 }

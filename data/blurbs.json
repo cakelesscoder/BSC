@@ -1,6 +1,6 @@
 {
-  "101": "Gas metal arc welding — fast, versatile, suited to high-volume production",
-  "102": "Precision tungsten inert gas welding — superior appearance and metallurgical control",
+  "101": "Gas metal arc welding - fast, versatile, suited to high-volume production",
+  "102": "Precision tungsten inert gas welding - superior appearance and metallurgical control",
   "151": "",
   "152": "",
   "153": "",
@@ -21,10 +21,10 @@
   "401": "Integrated extraction torch and filter unit · superior operator safety",
   "402": "Standard torch · for facilities with strong general ventilation",
   "451": "Standard 15 kg wire reel on enclosed reel stand",
-  "452": "Covered reel — wire protected from dust and contamination",
-  "453": "Marathon drum pack (200–300 kg) — maximum production uptime",
-  "501": "Probe-on-contact joint finding — compensates for part variation",
-  "502": "Standard programmed paths — best for tightly-jigged repeatable parts",
+  "452": "Covered reel - wire protected from dust and contamination",
+  "453": "Marathon drum pack (200–300 kg) - maximum production uptime",
+  "501": "Probe-on-contact joint finding - compensates for part variation",
+  "502": "Standard programmed paths - best for tightly-jigged repeatable parts",
   "551": "Single table frame · most compact footprint",
   "552": "Twin tables · operator load/unload while robot welds",
   "651": "Full enclosure with light curtain · single table · panel mounted on frame",
@@ -34,8 +34,8 @@
   "655": "2-post light curtain only · single table · minimum footprint",
   "656": "2-post light curtain only · twin tables · minimum footprint",
   "701": "Customer-led with full documentation and remote support",
-  "702": "Turnkey by Orion — mechanical, electrical, commissioning, validation",
+  "702": "Turnkey by Orion - mechanical, electrical, commissioning, validation",
   "751": "Comprehensive training at Orion Melbourne facility",
   "752": "Training at your factory using your actual cell and parts",
-  "753": "No training needed — experienced operators on existing system"
+  "753": "No training needed - experienced operators on existing system"
 }
