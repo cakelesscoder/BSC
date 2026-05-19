@@ -1,243 +1,240 @@
 {
   "process": {
     "101": [
-      "10101.jpg",
-      "10102.jpg",
-      "10103.jpg",
-      "10104.jpg",
-      "10106.jpg",
-      "10107.jpg",
-      "10108.jpg"
+      "101-mig/10101.jpg",
+      "101-mig/10102.jpg",
+      "101-mig/10103.jpg",
+      "101-mig/10104.jpg",
+      "101-mig/10106.jpg",
+      "101-mig/10107.jpg",
+      "101-mig/10108.jpg"
     ],
     "102": [
-      "10201.jpg",
-      "10202.jpeg",
-      "10203.jpg",
-      "10204.jpeg",
-      "10205.jpg",
-      "10206.jpg",
-      "10207.jpg",
-      "10208.jpg",
-      "10209.jpg",
-      "10210.jpg"
+      "102-tig/10201.jpg",
+      "102-tig/10202.jpeg",
+      "102-tig/10203.jpg",
+      "102-tig/10204.jpeg",
+      "102-tig/10205.jpg",
+      "102-tig/10206.jpg",
+      "102-tig/10207.jpg",
+      "102-tig/10208.jpg",
+      "102-tig/10209.jpg",
+      "102-tig/10210.jpg"
     ]
   },
   "material": {
     "151": [
-      "15101.jpg",
-      "15102.jpg",
-      "15103.jpg",
-      "15104.jpg",
-      "15105.jpg",
-      "15106.jpg",
-      "15107.jpg"
+      "151-mild-steel/15101.jpg",
+      "151-mild-steel/15102.jpg",
+      "151-mild-steel/15103.jpg",
+      "151-mild-steel/15104.jpg",
+      "151-mild-steel/15105.jpg",
+      "151-mild-steel/15106.jpg",
+      "151-mild-steel/15107.jpg"
     ],
     "152": [
-      "15201.jpg",
-      "15202.jpg",
-      "15203.jpg"
+      "152-stainless-steel/15201.jpg",
+      "152-stainless-steel/15202.jpg",
+      "152-stainless-steel/15203.jpg"
     ],
     "153": [
-      "15301.jpg",
-      "15302.jpg",
-      "15303.jpg",
-      "15304.jpg",
-      "15305.jpg",
-      "15306.jpg",
-      "15307.jpg",
-      "15309.jpg"
+      "153-aluminium/15301.jpg",
+      "153-aluminium/15302.jpg",
+      "153-aluminium/15303.jpg",
+      "153-aluminium/15304.jpg",
+      "153-aluminium/15305.jpg",
+      "153-aluminium/15306.jpg",
+      "153-aluminium/15307.jpg",
+      "153-aluminium/15309.jpg"
     ],
     "154": [
-      "15401.jpg",
-      "15402.jpg",
-      "15403.jpg",
-      "15404.jpg",
-      "15405.jpg"
+      "154-galvanised-steel/15401.jpg",
+      "154-galvanised-steel/15402.jpg",
+      "154-galvanised-steel/15403.jpg",
+      "154-galvanised-steel/15404.jpg",
+      "154-galvanised-steel/15405.jpg"
     ],
     "155": [
-      "15501.jpg",
-      "15502.jpg",
-      "15503.jpg",
-      "15505.jpeg",
-      "15506.jpeg",
-      "15507.jpg",
-      "15508.jpg"
+      "155-titanium/15501.jpg",
+      "155-titanium/15502.jpg",
+      "155-titanium/15503.jpg",
+      "155-titanium/15505.jpeg",
+      "155-titanium/15506.jpeg",
+      "155-titanium/15507.jpg",
+      "155-titanium/15508.jpg"
     ]
   },
   "reach": {
     "201": [
-      "20101.jpg",
-      "20102.jpg",
-      "20103.jpg",
-      "20104.jpg",
-      "20105.jpg",
-      "20106.jpeg",
-      "20107.jpg",
-      "20108.jpg",
-      "20109.jpg"
+      "201-tm1400/20101.jpg",
+      "201-tm1400/20102.jpg",
+      "201-tm1400/20103.jpg",
+      "201-tm1400/20104.jpg",
+      "201-tm1400/20105.jpg",
+      "201-tm1400/20106.jpeg",
+      "201-tm1400/20107.jpg",
+      "201-tm1400/20108.jpg",
+      "201-tm1400/20109.jpg"
     ],
     "202": [
-      "20201.jpg",
-      "20202.jpg"
+      "202-tm1800/20201.jpg",
+      "202-tm1800/20202.jpg"
     ],
     "203": [
-      "20301.jpg",
-      "20302.jpg",
-      "20303.jpg",
-      "20304.jpg",
-      "20305.jpg",
-      "20306.jpg",
-      "20307.jpg"
+      "203-tm2000/20301.jpg",
+      "203-tm2000/20302.jpg",
+      "203-tm2000/20303.jpg",
+      "203-tm2000/20304.jpg",
+      "203-tm2000/20305.jpg",
+      "203-tm2000/20306.jpg",
+      "203-tm2000/20307.jpg"
     ],
     "204": [
-      "20401.jpg",
-      "20402.jpg",
-      "20403.jpg",
-      "20404.jpg",
-      "20405.jpg"
+      "204-tl1800/20401.jpg",
+      "204-tl1800/20402.jpg",
+      "204-tl1800/20403.jpg",
+      "204-tl1800/20404.jpg",
+      "204-tl1800/20405.jpg"
     ],
     "205": [
-      "20501.jpg",
-      "20502.jpg",
-      "20503.jpg",
-      "20504.jpg",
-      "20505.jpg",
-      "20506.jpg",
-      "20507.jpg"
+      "205-tl2000/20501.jpg",
+      "205-tl2000/20502.jpg",
+      "205-tl2000/20503.jpg",
+      "205-tl2000/20504.jpg",
+      "205-tl2000/20505.jpg",
+      "205-tl2000/20506.jpg",
+      "205-tl2000/20507.jpg"
     ]
   },
   "amperage": {
     "251": [
-      "25101.jpg",
-      "25102.jpg",
-      "25103.jpg",
-      "25104.jpg"
+      "251-350amp/25101.jpg",
+      "251-350amp/25102.jpg",
+      "251-350amp/25103.jpg",
+      "251-350amp/25104.jpg"
     ],
     "252": [
-      "25201.jpg",
-      "25202.jpg",
-      "25203.jpg",
-      "25204.jpg"
+      "252-500amp/25201.jpg",
+      "252-500amp/25202.jpg",
+      "252-500amp/25203.jpg",
+      "252-500amp/25204.jpg"
     ]
   },
   "cooling": {
     "301": [
-      "30101.jpg",
-      "30102.jpg",
-      "30103.jpg",
-      "30104.jpg",
-      "30105.jpg",
-      "30106.jpg",
-      "30107.jpg",
-      "30108.jpg",
-      "30109.jpg",
-      "30110.jpg",
-      "30111.jpg"
+      "301-gas-cooled/30101.jpg",
+      "301-gas-cooled/30102.jpg",
+      "301-gas-cooled/30103.jpg",
+      "301-gas-cooled/30104.jpg",
+      "301-gas-cooled/30105.jpg",
+      "301-gas-cooled/30106.jpg",
+      "301-gas-cooled/30107.jpg",
+      "301-gas-cooled/30108.jpg",
+      "301-gas-cooled/30109.jpg",
+      "301-gas-cooled/30110.jpg",
+      "301-gas-cooled/30111.jpg"
     ],
     "302": [
-      "30201.jpg",
-      "30202.jpg",
-      "30205.jpg",
-      "30208.jpg"
+      "302-water-cooled/30201.jpg",
+      "302-water-cooled/30202.jpg",
+      "302-water-cooled/30205.jpg",
+      "302-water-cooled/30208.jpg"
     ]
   },
   "conduit": {
     "351": [
-      "35101.jpg",
-      "35102.jpg",
-      "35103.jpg",
-      "35104.jpg",
-      "35105.jpg",
-      "35106.jpg",
-      "35107.jpg",
-      "35108.jpg",
-      "35109.jpg",
-      "35111.jpg"
+      "351-separate/35101.jpg",
+      "351-separate/35102.jpg",
+      "351-separate/35103.jpg",
+      "351-separate/35104.jpg",
+      "351-separate/35105.jpg",
+      "351-separate/35106.jpg",
+      "351-separate/35107.jpg",
+      "351-separate/35108.jpg",
+      "351-separate/35109.jpg",
+      "351-separate/35111.jpg"
     ],
     "352": [
-      "35201.jpg",
-      "35202.jpg",
-      "35203.jpg",
-      "35204.jpg",
-      "35205.jpg",
-      "35206.jpg"
+      "352-through-arm/35201.jpg",
+      "352-through-arm/35202.jpg",
+      "352-through-arm/35203.jpg",
+      "352-through-arm/35204.jpg",
+      "352-through-arm/35205.jpg",
+      "352-through-arm/35206.jpg"
     ],
     "353": [
-      "35301.jpg",
-      "35302.jpeg",
-      "35304.jpg",
-      "35305.jpeg",
-      "35306.jpg",
-      "35307.jpg"
+      "353-external/35301.jpg",
+      "353-external/35302.jpeg",
+      "353-external/35304.jpg",
+      "353-external/35305.jpeg",
+      "353-external/35306.jpg",
+      "353-external/35307.jpg"
     ]
   },
   "fume": {
     "401": [
-      "40101.jpg",
-      "40102.jpg",
-      "40103.jpg"
+      "401-fume-extraction/40101.jpg",
+      "401-fume-extraction/40102.jpg",
+      "401-fume-extraction/40103.jpg"
     ]
   },
   "wire": {
     "451": [
-      "45101.jpg",
-      "45102.jpg",
-      "45103.jpg",
-      "45104.jpg",
-      "45105.jpg"
+      "451-wire-reel/45101.jpg",
+      "451-wire-reel/45102.jpg",
+      "451-wire-reel/45103.jpg",
+      "451-wire-reel/45104.jpg",
+      "451-wire-reel/45105.jpg"
     ],
     "452": [
-      "45201.jpg",
-      "45202.jpg",
-      "45203.jpg"
+      "452-wire-reel-cover/45201.jpg",
+      "452-wire-reel-cover/45202.jpg",
+      "452-wire-reel-cover/45203.jpg"
     ],
     "453": [
-      "45301.jpg",
-      "45302.jpg"
+      "453-drum-pack/45301.jpg",
+      "453-drum-pack/45302.jpg"
     ]
   },
   "touch": {
     "_generic": [
-      "touch_sense.jpg"
+      "_generic/touch_sense.jpg"
     ]
   },
   "tables": {
     "551": [
-      "55101.jpg",
-      "55102.jpg",
-      "55103.jpg"
+      "551-1x-table/55101.jpg",
+      "551-1x-table/55102.jpg",
+      "551-1x-table/55103.jpg"
     ],
     "552": [
-      "55201.jpg",
-      "55202.jpg"
-    ],
-    "553": [
-      "55303.jpg"
+      "552-2x-tables/55201.jpg",
+      "552-2x-tables/55202.jpg"
     ]
   },
   "guarding": {
     "651": [
-      "65101.jpg",
-      "65102.jpg",
-      "65103.jpg",
-      "65104.jpg"
+      "651-full-1t-panel-on-frame/65101.jpg",
+      "651-full-1t-panel-on-frame/65102.jpg",
+      "651-full-1t-panel-on-frame/65103.jpg",
+      "651-full-1t-panel-on-frame/65104.jpg"
     ],
     "652": [
-      "65201.jpg"
+      "652-full-1t-two-walls/65201.jpg"
     ],
     "653": [
-      "65301.jpg",
-      "65302.jpg",
-      "65303.jpg"
+      "653-full-2t-panel-on-frame/65301.jpg",
+      "653-full-2t-panel-on-frame/65302.jpg",
+      "653-full-2t-panel-on-frame/65303.jpg"
     ],
     "654": [
-      "65401.jpg"
+      "654-full-2t-two-walls/65401.jpg"
     ],
     "655": [
-      "65501.jpg"
+      "655-curtain-1t/65501.jpg"
     ],
     "656": [
-      "65601.jpg"
+      "656-curtain-2t/65601.jpg"
     ]
   },
   "install": {},
