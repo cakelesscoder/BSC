@@ -1807,7 +1807,7 @@ function bindSummary() {
       const lbl = c ? DATA.options[q.key][c] : '-';
       return `  ${q.short.padEnd(12)} ${c || '---'}  ${lbl}`;
     }).join('%0D%0A');
-    const subject = encodeURIComponent('Base System Configuration · ' + code);
+    const subject = encodeURIComponent('Request for system quote: ' + code);
     const body = encodeURIComponent('Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + code + '\n\n').replace(/%0A/g,'%0D%0A')
       + lines
       + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
