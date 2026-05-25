@@ -894,14 +894,32 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 32px;
+    overflow: hidden;
   }
   .lightbox.open { display: flex; }
   .lightbox img {
-    max-width: 100%;
-    max-height: 100%;
+    /*
+     * Use explicit viewport units rather than % so the image is always fully
+     * visible regardless of the flex container's padding interpretation.
+     *
+     * Clearances:
+     *   Horizontal: nav buttons are 56 px wide at left/right:24px → 80px each side.
+     *               Use 96px to give a comfortable gap (192px total).
+     *   Vertical:   close button is at top:24px, h:44px → 68px from top.
+     *               Counter is at bottom:24px, h:~32px → ~56px from bottom.
+     *               Use 72px each side (144px total) which covers both.
+     *
+     * When embedded in an iframe the viewport units refer to the iframe's own
+     * viewport, so the values stay correct after the parent scrolls the iframe
+     * to the top of the browser window (see openLightbox / squarespace-embed).
+     */
+    max-width:  calc(100vw - 192px);
+    max-height: calc(100vh - 144px);
+    width: auto;
+    height: auto;
     object-fit: contain;
     box-shadow: var(--shadow-lg);
+    display: block;
   }
   .lightbox-close {
     position: absolute;
@@ -1903,6 +1921,15 @@ function openLightbox(qkey, imgs) {
   lbState = { qkey, imgs, idx: 0 };
   updateLightbox();
   $('lightbox').classList.add('open');
+  // When embedded in an iframe (e.g. Squarespace), position:fixed anchors to
+  // the top of the iframe document, not the browser viewport.  Tell the parent
+  // page to scroll so the iframe top aligns with the viewport top — that way
+  // the overlay covers the full visible screen.
+  try {
+    if (window.self !== window.top) {
+      window.parent.postMessage({ type: 'orion-bsc-scroll-to-top' }, '*');
+    }
+  } catch (e) {}
 }
 
 function updateLightbox() {

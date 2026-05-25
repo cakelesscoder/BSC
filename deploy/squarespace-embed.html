@@ -95,6 +95,13 @@
         );
       } catch (e) {}
     }
+
+    // Lightbox open: position:fixed inside an iframe is fixed to the iframe
+    // document origin, not the browser viewport.  Scroll the iframe's top edge
+    // to the top of the viewport so the overlay covers the full screen.
+    if (data && data.type === 'orion-bsc-scroll-to-top') {
+      frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 })();
 </script>
