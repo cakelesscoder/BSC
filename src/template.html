@@ -1811,7 +1811,7 @@ function bindSummary() {
     const body = encodeURIComponent('Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + code + '\n\n').replace(/%0A/g,'%0D%0A')
       + lines
       + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:jeff@orionautomation.com.au?subject=${subject}&body=${body}`;
   });
 }
 
