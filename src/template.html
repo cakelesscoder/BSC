@@ -739,9 +739,18 @@
   .app.welcome-mode {
     max-width: 100%;
     padding: 0;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
+  }
+
+  /* Ensure html/body are dark in welcome mode so no white bleeds through
+     around or below the welcome panel */
+  html.welcome-mode,
+  body.welcome-mode {
+    background: var(--ink);
+    min-height: 100vh;
   }
 
   .welcome {
@@ -1126,6 +1135,11 @@
    ============================================================ */
 const IMAGE_BASE = '';   // e.g. 'https://lachlan.github.io/orion-bsc/images'
 
+// Set to true to show the branded header bar (logo + "Welding Cell Configurator")
+// above each question and on the welcome screen. Currently hidden because the
+// Squarespace site provides its own navigation and the double-header is redundant.
+const SHOW_HEADER = false;
+
 // Image-load error fallback. Called from inline onerror handlers.
 window.handleImgError = function(img, icon) {
   const parent = img.parentElement;
@@ -1331,12 +1345,16 @@ function render() {
     app.classList.add('welcome-mode');
     document.body.classList.remove('config-mode');
     document.documentElement.classList.remove('config-mode');
+    document.body.classList.add('welcome-mode');
+    document.documentElement.classList.add('welcome-mode');
     app.innerHTML = renderWelcome();
     bindWelcome();
     requestAnimationFrame(postIframeHeight);
     return;
   }
   app.classList.remove('welcome-mode');
+  document.body.classList.remove('welcome-mode');
+  document.documentElement.classList.remove('welcome-mode');
   document.body.classList.add('config-mode');
   document.documentElement.classList.add('config-mode');
   if (state.step >= QUESTION_KEYS.length) {
@@ -1365,13 +1383,14 @@ function renderWelcome() {
   const heroBase = IMAGE_BASE ? IMAGE_BASE.replace(/\/$/, '') : './images';
   const heroDir = `${heroBase}/hero`;
   return `
+    ${SHOW_HEADER ? `
     <div class="header">
       <div class="brand">
         <img class="brand-logo" src="./images/logo.png" alt="Orion Automation">
         <div class="brand-divider"></div>
         <div class="brand-tag">Welding Cell Configurator</div>
       </div>
-    </div>
+    </div>` : ''}
     <div class="welcome">
       <div class="welcome-text">
         <h1>Configure your robotic welding cell</h1>
@@ -1395,6 +1414,7 @@ function renderWelcome() {
 }
 
 function renderHeader() {
+  if (!SHOW_HEADER) return '';
   return `
     <div class="header">
       <div class="brand">
@@ -1559,6 +1579,7 @@ function renderNav() {
       <div class="nav-summary">
         <strong>${completed}</strong> of ${QUESTION_KEYS.length} selections made
       </div>
+      ${!SHOW_HEADER ? `<button class="restart-btn" id="restart-btn">↻ Start over</button>` : ''}
     </div>
   `;
 }
