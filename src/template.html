@@ -899,8 +899,11 @@
   .lightbox.open { display: flex; }
   .lightbox img {
     /*
-     * Use explicit viewport units rather than % so the image is always fully
-     * visible regardless of the flex container's padding interpretation.
+     * --lb-vw / --lb-vh are set by JS to the *real browser window* dimensions
+     * when the configurator runs inside an iframe (where 100vw/100vh equal the
+     * iframe document size, not the visible window).  When not in an iframe the
+     * properties are absent and the calc() falls back to 100vw/100vh, which are
+     * correct in that context.
      *
      * Clearances:
      *   Horizontal: nav buttons are 56 px wide at left/right:24px → 80px each side.
@@ -908,13 +911,9 @@
      *   Vertical:   close button is at top:24px, h:44px → 68px from top.
      *               Counter is at bottom:24px, h:~32px → ~56px from bottom.
      *               Use 72px each side (144px total) which covers both.
-     *
-     * When embedded in an iframe the viewport units refer to the iframe's own
-     * viewport, so the values stay correct after the parent scrolls the iframe
-     * to the top of the browser window (see openLightbox / squarespace-embed).
      */
-    max-width:  calc(100vw - 192px);
-    max-height: calc(100vh - 144px);
+    max-width:  calc(var(--lb-vw, 100vw) - 192px);
+    max-height: calc(var(--lb-vh, 100vh) - 144px);
     width: auto;
     height: auto;
     object-fit: contain;
@@ -1366,7 +1365,7 @@ function render() {
     document.documentElement.classList.add('welcome-mode');
     app.innerHTML = renderWelcome();
     bindWelcome();
-    requestAnimationFrame(postIframeHeight);
+    requestAnimationFrame(onAfterRender);
     return;
   }
   app.classList.remove('welcome-mode');
@@ -1378,7 +1377,7 @@ function render() {
     app.innerHTML = renderHeader() + renderSummary();
     bindCommon();
     bindSummary();
-    requestAnimationFrame(postIframeHeight);
+    requestAnimationFrame(onAfterRender);
     return;
   }
   const slideClass = direction === 'back' ? 'slide-back' : '';
@@ -1393,7 +1392,7 @@ function render() {
   bindCommon();
   bindQuestion();
   bindSlideshow();
-  requestAnimationFrame(postIframeHeight);
+  requestAnimationFrame(onAfterRender);
 }
 
 function renderWelcome() {
@@ -1889,6 +1888,13 @@ function showToast(msg) {
 
 // When embedded in an iframe (e.g. Squarespace), post our content height
 // to the parent so it can resize the iframe and avoid an inner scrollbar.
+//
+// IMPORTANT: only ever report an *increasing* height.  Squarespace's outer
+// container sometimes caches the tallest height it has seen and does not
+// shrink when the iframe does, leaving a large white gap.  By never sending
+// a smaller value the iframe height is monotonically non-decreasing, so
+// Squarespace's cached value is always correct and there is no gap.
+let _iframeMaxH = 0;
 function postIframeHeight() {
   if (window.parent === window) return; // not in iframe
   try {
@@ -1896,11 +1902,28 @@ function postIframeHeight() {
       document.body.scrollHeight,
       document.documentElement.scrollHeight
     );
-    window.parent.postMessage({ type: 'orion-bsc-resize', height: h }, '*');
+    if (h > _iframeMaxH) {
+      _iframeMaxH = h;
+      window.parent.postMessage({ type: 'orion-bsc-resize', height: _iframeMaxH }, '*');
+    }
   } catch (e) { /* parent on different origin, ignore */ }
 }
 
-// ResizeObserver: re-fires postIframeHeight whenever content height changes —
+// After every render, lock the app container to the largest height seen so
+// the document itself never shrinks (which would also prevent postIframeHeight
+// from ever sending a smaller value even without the _iframeMaxH guard above).
+function lockMinHeight() {
+  const app = document.getElementById('app');
+  if (!app) return;
+  const h = document.documentElement.scrollHeight;
+  const cur = parseFloat(app.style.minHeight) || 0;
+  if (h > cur) app.style.minHeight = h + 'px';
+}
+
+// Combined post-render hook called via requestAnimationFrame after every step.
+function onAfterRender() { lockMinHeight(); postIframeHeight(); }
+
+// ResizeObserver: re-fires postIframeHeight whenever content height *grows* —
 // catches option card images loading after the initial render frame, font
 // metrics settling, and any other reflow that requestAnimationFrame misses.
 if (window.parent !== window && typeof ResizeObserver !== 'undefined') {
@@ -1917,20 +1940,42 @@ window.addEventListener('load', postIframeHeight);
 let lbState = { qkey: '', imgs: [], idx: 0 };
 
 function openLightbox(qkey, imgs) {
-  // Preload all images
   lbState = { qkey, imgs, idx: 0 };
   updateLightbox();
-  $('lightbox').classList.add('open');
-  // When embedded in an iframe (e.g. Squarespace), position:fixed anchors to
-  // the top of the iframe document, not the browser viewport.  Tell the parent
-  // page to scroll so the iframe top aligns with the viewport top — that way
-  // the overlay covers the full visible screen.
-  try {
-    if (window.self !== window.top) {
-      window.parent.postMessage({ type: 'orion-bsc-scroll-to-top' }, '*');
-    }
-  } catch (e) {}
+  if (window.self !== window.top) {
+    // Inside an iframe, position:fixed is fixed to the iframe document origin,
+    // not the browser viewport.  For a 2000 px iframe, inset:0 covers the full
+    // 2000 px and flex-centre puts the image at ~y=1000 — far below the visible
+    // area when the user is reading question 4 at y=600.
+    //
+    // Instead, ask the parent for exactly how far down in the iframe the browser
+    // viewport currently starts, then use position:absolute to place the overlay
+    // at that offset so it covers precisely the visible window.
+    try { window.parent.postMessage({ type: 'orion-bsc-lightbox-open' }, '*'); } catch(e) {}
+    // The lightbox is shown when we receive the orion-bsc-lightbox-ready reply.
+  } else {
+    // Standalone (not in iframe): position:fixed works normally.
+    $('lightbox').classList.add('open');
+  }
 }
+
+// Handle the parent's reply: position the overlay to cover the visible viewport.
+window.addEventListener('message', function (e) {
+  if (!e.data || e.data.type !== 'orion-bsc-lightbox-ready') return;
+  const lb = $('lightbox');
+  const top    = e.data.top    || 0;
+  const height = e.data.height || window.innerHeight;
+  const width  = e.data.width  || window.innerWidth;
+  // Switch from fixed to absolute, anchored at the visible viewport region.
+  lb.style.position = 'absolute';
+  lb.style.top      = top + 'px';
+  lb.style.bottom   = 'auto';
+  lb.style.height   = height + 'px';
+  // Supply real browser-window dimensions to the image size constraints.
+  lb.style.setProperty('--lb-vw', width  + 'px');
+  lb.style.setProperty('--lb-vh', height + 'px');
+  lb.classList.add('open');
+});
 
 function updateLightbox() {
   $('lb-img').src = imageUrl(lbState.qkey, lbState.imgs[lbState.idx]);
@@ -1939,7 +1984,17 @@ function updateLightbox() {
   $('lb-next').style.display = lbState.imgs.length > 1 ? '' : 'none';
 }
 
-function closeLightbox() { $('lightbox').classList.remove('open'); }
+function closeLightbox() {
+  const lb = $('lightbox');
+  lb.classList.remove('open');
+  // Reset any inline overrides applied for iframe mode.
+  lb.style.position = '';
+  lb.style.top      = '';
+  lb.style.bottom   = '';
+  lb.style.height   = '';
+  lb.style.removeProperty('--lb-vw');
+  lb.style.removeProperty('--lb-vh');
+}
 
 // Confirm dialog
 $('confirm-cancel').addEventListener('click', closeConfirmDialog);

@@ -96,11 +96,26 @@
       } catch (e) {}
     }
 
-    // Lightbox open: position:fixed inside an iframe is fixed to the iframe
-    // document origin, not the browser viewport.  Scroll the iframe's top edge
-    // to the top of the viewport so the overlay covers the full screen.
-    if (data && data.type === 'orion-bsc-scroll-to-top') {
-      frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Lightbox open: the configurator cannot use position:fixed reliably inside
+    // an iframe (fixed is relative to the iframe document origin, not the browser
+    // viewport).  Instead it asks us where in the iframe the browser viewport
+    // currently starts, then uses position:absolute at that offset.
+    //
+    // frame.getBoundingClientRect().top tells us how far the iframe top is from
+    // the browser viewport top.  If rect.top = -800 the user has scrolled 800 px
+    // past the iframe start, so the overlay must begin 800 px down inside the
+    // iframe document to align with the visible window.
+    if (data && data.type === 'orion-bsc-lightbox-open') {
+      var rect = frame.getBoundingClientRect();
+      var lightboxTop = Math.max(0, -rect.top); // px into iframe doc where viewport starts
+      try {
+        frame.contentWindow.postMessage({
+          type:   'orion-bsc-lightbox-ready',
+          top:    lightboxTop,
+          height: window.innerHeight,
+          width:  window.innerWidth
+        }, ALLOWED_ORIGIN);
+      } catch (e) {}
     }
   });
 })();
