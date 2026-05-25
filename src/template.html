@@ -1643,7 +1643,7 @@ function renderSummary() {
     <div class="summary-layout">
       <div class="summary">
         <div class="code-bar">
-          <span class="code-bar-label">Config</span>
+          <span class="code-bar-label">Configuration code for your system:</span>
           <span class="code-bar-value" id="config-code">${codeString}</span>
           <button class="btn btn-primary" id="copy-code">Copy</button>
         </div>
@@ -1948,11 +1948,17 @@ function openLightbox(qkey, imgs) {
     // 2000 px and flex-centre puts the image at ~y=1000 — far below the visible
     // area when the user is reading question 4 at y=600.
     //
-    // Instead, ask the parent for exactly how far down in the iframe the browser
-    // viewport currently starts, then use position:absolute to place the overlay
-    // at that offset so it covers precisely the visible window.
+    // Ask the parent for the visible viewport offset so we can use
+    // position:absolute anchored to the right place.  If the parent doesn't
+    // respond within 150 ms (e.g. plain Squarespace without the helper script),
+    // fall back to opening with position:fixed — better than doing nothing.
+    let _lbParentReplied = false;
     try { window.parent.postMessage({ type: 'orion-bsc-lightbox-open' }, '*'); } catch(e) {}
-    // The lightbox is shown when we receive the orion-bsc-lightbox-ready reply.
+    setTimeout(() => {
+      if (!_lbParentReplied) $('lightbox').classList.add('open');
+    }, 150);
+    // Store the flag on lbState so the message handler can clear it.
+    lbState._parentReplied = () => { _lbParentReplied = true; };
   } else {
     // Standalone (not in iframe): position:fixed works normally.
     $('lightbox').classList.add('open');
@@ -1962,6 +1968,9 @@ function openLightbox(qkey, imgs) {
 // Handle the parent's reply: position the overlay to cover the visible viewport.
 window.addEventListener('message', function (e) {
   if (!e.data || e.data.type !== 'orion-bsc-lightbox-ready') return;
+  // Cancel the fallback timeout (if it fired it would be a no-op anyway, but
+  // mark it so we don't open twice).
+  if (typeof lbState._parentReplied === 'function') lbState._parentReplied();
   const lb = $('lightbox');
   const top    = e.data.top    || 0;
   const height = e.data.height || window.innerHeight;
