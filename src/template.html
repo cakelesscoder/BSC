@@ -1939,61 +1939,37 @@ window.addEventListener('load', postIframeHeight);
 // Lightbox
 let lbState = { qkey: '', imgs: [], idx: 0 };
 
+// Compact height used for the lightbox when running inside an iframe.
+// Can't escape the iframe to fill the real browser window, so we use a
+// fixed-height strip anchored right where the user clicked instead.
+const LB_IFRAME_HEIGHT = 480;
+
 function openLightbox(qkey, imgs, triggerEl) {
   lbState = { qkey, imgs, idx: 0 };
   updateLightbox();
   const lb = $('lightbox');
   if (window.self !== window.top) {
-    // Inside a full-height iframe (e.g. Squarespace embed), position:fixed is
-    // anchored to the iframe document origin — for a 2000 px iframe the flex
-    // centre lands at y≈1000, which is off-screen whenever the user has
-    // scrolled past that point.  No timer, no waiting for the parent:
-    //
-    // 1. Get the Y midpoint of the element the user just clicked.
-    //    getBoundingClientRect() is relative to the iframe viewport; since the
-    //    iframe has no scrollbar of its own, that equals absolute document Y.
-    // 2. Estimate the visible height using screen.height (close enough for
-    //    centering — the lightbox just needs to be near where the user clicked).
-    // 3. Open instantly with position:absolute so there is zero delay.
-    // 4. Also fire the parent message; if it replies with exact data the handler
-    //    below will reposition to pixel-perfect.
-    const rect    = triggerEl ? triggerEl.getBoundingClientRect() : null;
-    const btnMidY = rect ? rect.top + rect.height / 2
-                         : document.documentElement.scrollHeight / 2;
-    const vhEst   = Math.round(window.screen.height * 0.85); // ~visible area
-    const lbTop   = Math.max(0, btnMidY - vhEst / 2);
+    // Cross-origin iframe (Squarespace embed): can't escape to fill the real
+    // browser window. Use a compact strip anchored to where the user clicked.
+    // getBoundingClientRect() gives absolute Y in the iframe document since
+    // the iframe has no internal scroll of its own.
+    const rect   = triggerEl ? triggerEl.getBoundingClientRect() : null;
+    const btnTop = rect ? rect.top : document.documentElement.scrollHeight / 2;
+    const lbTop  = Math.max(0, btnTop - LB_IFRAME_HEIGHT / 2);
     lb.style.position = 'absolute';
+    lb.style.left     = '0';
+    lb.style.right    = '0';
     lb.style.top      = lbTop + 'px';
     lb.style.bottom   = 'auto';
-    lb.style.height   = vhEst + 'px';
+    lb.style.height   = LB_IFRAME_HEIGHT + 'px';
     lb.style.setProperty('--lb-vw', window.innerWidth + 'px');
-    lb.style.setProperty('--lb-vh', vhEst + 'px');
+    lb.style.setProperty('--lb-vh', LB_IFRAME_HEIGHT + 'px');
     lb.classList.add('open');
-    // Ask parent for exact viewport data; handler below refines position if it replies.
-    try { window.parent.postMessage({ type: 'orion-bsc-lightbox-open' }, '*'); } catch(e) {}
   } else {
-    // Standalone (not in iframe): position:fixed works normally.
+    // Standalone (not in iframe): position:fixed fills the real browser window.
     lb.classList.add('open');
   }
 }
-
-// Handle the parent's reply: reposition the already-open overlay to the exact
-// visible viewport (pixel-perfect refinement of the estimate above).
-window.addEventListener('message', function (e) {
-  if (!e.data || e.data.type !== 'orion-bsc-lightbox-ready') return;
-  const lb = $('lightbox');
-  const top    = e.data.top    || 0;
-  const height = e.data.height || window.innerHeight;
-  const width  = e.data.width  || window.innerWidth;
-  lb.style.position = 'absolute';
-  lb.style.top      = top + 'px';
-  lb.style.bottom   = 'auto';
-  lb.style.height   = height + 'px';
-  lb.style.setProperty('--lb-vw', width  + 'px');
-  lb.style.setProperty('--lb-vh', height + 'px');
-  // Ensure open in case it wasn't already (shouldn't happen, but safe).
-  lb.classList.add('open');
-});
 
 function updateLightbox() {
   $('lb-img').src = imageUrl(lbState.qkey, lbState.imgs[lbState.idx]);
