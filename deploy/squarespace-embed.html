@@ -32,19 +32,14 @@
     width: 100%;
     min-height: 640px;   /* prevents layout collapse while the configurator loads */
     border: none;
+    outline: none;
     overflow: hidden;
-  }
-
-  /* Squarespace code blocks have built-in top/bottom padding that leaves a thin
-     gap between the iframe and the section edges. Pull the iframe flush. */
-  #orion-bsc-wrap {
-    display: block;
-    margin-top: -20px;
-    margin-bottom: -20px;
+    /* Smooth height transitions prevent Squarespace's layout engine from
+       briefly exposing the section background (white flash) during the
+       instant jump. The ease-out keeps it feeling snappy, not sluggish. */
+    transition: height 0.2s ease-out;
   }
 </style>
-
-<div id="orion-bsc-wrap">
 
 <iframe
   id="orion-bsc-frame"
