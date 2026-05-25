@@ -65,22 +65,35 @@
     if (event.origin !== ALLOWED_ORIGIN) return;
 
     var data = event.data;
-    if (!data || data.type !== 'orion-bsc-resize') return;
 
-    var h = parseInt(data.height, 10);
-    if (!isNaN(h) && h > 0) {
-      frame.style.height = h + 'px';
+    // Resize: keep iframe height honest.
+    if (data && data.type === 'orion-bsc-resize') {
+      var h = parseInt(data.height, 10);
+      if (!isNaN(h) && h > 0) {
+        frame.style.height = h + 'px';
 
-      // Also release any Squarespace parent that may have locked to a tall height.
-      var p = frame.parentElement;
-      if (p) {
-        p.style.height = 'auto';
-        p.style.minHeight = '0';
+        // Also release any Squarespace parent that may have locked to a tall height.
+        var p = frame.parentElement;
+        if (p) {
+          p.style.height = 'auto';
+          p.style.minHeight = '0';
+        }
+        if (p && p.parentElement) {
+          p.parentElement.style.height = 'auto';
+          p.parentElement.style.minHeight = '0';
+        }
       }
-      if (p && p.parentElement) {
-        p.parentElement.style.height = 'auto';
-        p.parentElement.style.minHeight = '0';
-      }
+    }
+
+    // URL request: the configurator can't read window.parent.location cross-origin,
+    // so it asks us. We reply with the current Squarespace page URL.
+    if (data && data.type === 'orion-bsc-request-url') {
+      try {
+        frame.contentWindow.postMessage(
+          { type: 'orion-bsc-parent-url', url: window.location.href },
+          ALLOWED_ORIGIN
+        );
+      } catch (e) {}
     }
   });
 })();

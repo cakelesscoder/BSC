@@ -1789,9 +1789,22 @@ function bindSummary() {
     navigator.clipboard.writeText(code).then(showToast);
   });
   $('share-link').addEventListener('click', () => {
-    navigator.clipboard.writeText(location.href).then(() => {
-      showToast('Link copied to clipboard');
-    });
+    // When embedded we can't read window.parent.location cross-origin.
+    // Ask the parent embed script to send us its URL via postMessage, then copy it.
+    // Falls back to our own location (direct GitHub Pages visits).
+    if (window.parent !== window) {
+      const handler = (ev) => {
+        if (ev.data && ev.data.type === 'orion-bsc-parent-url') {
+          window.removeEventListener('message', handler);
+          navigator.clipboard.writeText(ev.data.url).then(() => showToast('Link copied to clipboard'));
+        }
+      };
+      window.addEventListener('message', handler);
+      setTimeout(() => window.removeEventListener('message', handler), 1500); // safety cleanup
+      window.parent.postMessage({ type: 'orion-bsc-request-url' }, '*');
+    } else {
+      navigator.clipboard.writeText(location.href).then(() => showToast('Link copied to clipboard'));
+    }
   });
   $('print-spec').addEventListener('click', () => window.print());
   $('back-to-config').addEventListener('click', () => {
@@ -1811,7 +1824,9 @@ function bindSummary() {
     const body = encodeURIComponent('Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + code + '\n\n').replace(/%0A/g,'%0D%0A')
       + lines
       + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
-    window.location.href = `mailto:jeff@orionautomation.com.au?subject=${subject}&body=${body}`;
+    // window.open handles mailto reliably in cross-origin iframes;
+    // window.location.href can be blocked by the browser when embedded.
+    window.open(`mailto:jeff@orionautomation.com.au?subject=${subject}&body=${body}`);
   });
 }
 
