@@ -863,7 +863,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, var(--ink) 0%, rgba(12,24,39,0.3) 50%, transparent 100%);
+    background: linear-gradient(to right, var(--ink) 0%, transparent 28%);
     z-index: 0;
     pointer-events: none;
   }
@@ -977,6 +977,7 @@
     .welcome { grid-template-columns: 1fr; }
     .welcome-text { padding: 36px 24px; }
     .welcome-hero { min-height: 300px; }
+    .welcome-hero::after { display: none; } /* full image on mobile — no text column to blend with */
     .q-header { flex-direction: column; gap: 16px; }
     .q-actions { align-self: flex-start; flex-wrap: wrap; }
     .spec-sheet { columns: 1; }
