@@ -746,11 +746,11 @@
   }
 
   /* Ensure html/body are dark in welcome mode so no white bleeds through
-     around or below the welcome panel */
+     around or below the welcome panel. No min-height here — we let the
+     iframe size honestly to the welcome content via the reset-height signal. */
   html.welcome-mode,
   body.welcome-mode {
     background: var(--ink);
-    min-height: 100vh;
   }
 
   .welcome {
@@ -1350,6 +1350,10 @@ function render() {
     document.documentElement.classList.add('welcome-mode');
     app.innerHTML = renderWelcome();
     bindWelcome();
+    // Tell the parent embed to release the max-height lock so the iframe
+    // shrinks back to welcome's natural content height, not a stale tall value
+    // left over from the summary or a previous deep question page.
+    try { window.parent.postMessage({ type: 'orion-bsc-reset-height' }, '*'); } catch(e) {}
     requestAnimationFrame(postIframeHeight);
     return;
   }
@@ -1622,6 +1626,7 @@ function renderSummary() {
         <button class="btn btn-secondary" id="back-to-config">← Edit answers</button>
         <button class="btn btn-secondary" id="share-link">Share link</button>
         <button class="btn btn-secondary" id="print-spec">Print</button>
+        <button class="restart-btn" id="restart-btn">↻ Start over</button>
       </div>
     </div>
     <div class="summary-layout">
