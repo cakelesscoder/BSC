@@ -696,6 +696,44 @@
   }
   .copy-toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ---------- Confirm dialog ---------- */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 24, 39, 0.82);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    padding: 24px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px 28px 24px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+  .confirm-card h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+  .confirm-card p {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
   /* ---------- Welcome screen ---------- */
   /* --- Welcome: full-viewport dark immersive --- */
   .app.welcome-mode {
@@ -1063,6 +1101,17 @@
   <img id="lb-img" alt="">
   <button class="lightbox-nav next" id="lb-next" aria-label="Next">›</button>
   <div class="lightbox-counter" id="lb-counter"></div>
+</div>
+
+<div class="confirm-overlay" id="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="confirm-card">
+    <h3 id="confirm-title">Start over?</h3>
+    <p>Your current configuration will be cleared.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-primary" id="confirm-ok">Start over</button>
+    </div>
+  </div>
 </div>
 
 <div class="copy-toast" id="toast">Copied to clipboard</div>
@@ -1760,13 +1809,20 @@ function cascadeInvalidate() {
 }
 
 function resetAll() {
-  if (!Object.keys(state.selections).length || confirm('Start over? Your current configuration will be cleared.')) {
+  if (!Object.keys(state.selections).length) {
+    // Nothing selected yet — skip the confirmation
     state.step = -1;
     state.selections = {};
     state.infoOpen = false;
     try { sessionStorage.removeItem('bsc'); } catch(e) {}
     render();
+  } else {
+    $('confirm-dialog').classList.add('open');
   }
+}
+
+function closeConfirmDialog() {
+  $('confirm-dialog').classList.remove('open');
 }
 
 function showToast(msg) {
@@ -1822,6 +1878,20 @@ function updateLightbox() {
 
 function closeLightbox() { $('lightbox').classList.remove('open'); }
 
+// Confirm dialog
+$('confirm-cancel').addEventListener('click', closeConfirmDialog);
+$('confirm-ok').addEventListener('click', function () {
+  closeConfirmDialog();
+  state.step = -1;
+  state.selections = {};
+  state.infoOpen = false;
+  try { sessionStorage.removeItem('bsc'); } catch(e) {}
+  render();
+});
+$('confirm-dialog').addEventListener('click', function (e) {
+  if (e.target === $('confirm-dialog')) closeConfirmDialog();
+});
+
 $('lb-close').addEventListener('click', closeLightbox);
 $('lb-prev').addEventListener('click', () => {
   lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length;
@@ -1835,8 +1905,11 @@ $('lightbox').addEventListener('click', e => {
   if (e.target === $('lightbox')) closeLightbox();
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if ($('confirm-dialog').classList.contains('open')) { closeConfirmDialog(); return; }
+    if ($('lightbox').classList.contains('open')) { closeLightbox(); return; }
+  }
   if (!$('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') { lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length; updateLightbox(); }
   if (e.key === 'ArrowRight') { lbState.idx = (lbState.idx + 1) % lbState.imgs.length; updateLightbox(); }
 });
