@@ -1765,7 +1765,7 @@ function bindSlideshow() {
       const qkey = btn.dataset.lbQkey;
       const code = btn.dataset.lbCode;
       const imgs = getImagesForOption(qkey, code);
-      if (imgs.length) openLightbox(qkey, imgs);
+      if (imgs.length) openLightbox(qkey, imgs, btn);
     });
   });
 
@@ -1939,50 +1939,59 @@ window.addEventListener('load', postIframeHeight);
 // Lightbox
 let lbState = { qkey: '', imgs: [], idx: 0 };
 
-function openLightbox(qkey, imgs) {
+function openLightbox(qkey, imgs, triggerEl) {
   lbState = { qkey, imgs, idx: 0 };
   updateLightbox();
+  const lb = $('lightbox');
   if (window.self !== window.top) {
-    // Inside an iframe, position:fixed is fixed to the iframe document origin,
-    // not the browser viewport.  For a 2000 px iframe, inset:0 covers the full
-    // 2000 px and flex-centre puts the image at ~y=1000 — far below the visible
-    // area when the user is reading question 4 at y=600.
+    // Inside a full-height iframe (e.g. Squarespace embed), position:fixed is
+    // anchored to the iframe document origin — for a 2000 px iframe the flex
+    // centre lands at y≈1000, which is off-screen whenever the user has
+    // scrolled past that point.  No timer, no waiting for the parent:
     //
-    // Ask the parent for the visible viewport offset so we can use
-    // position:absolute anchored to the right place.  If the parent doesn't
-    // respond within 150 ms (e.g. plain Squarespace without the helper script),
-    // fall back to opening with position:fixed — better than doing nothing.
-    let _lbParentReplied = false;
+    // 1. Get the Y midpoint of the element the user just clicked.
+    //    getBoundingClientRect() is relative to the iframe viewport; since the
+    //    iframe has no scrollbar of its own, that equals absolute document Y.
+    // 2. Estimate the visible height using screen.height (close enough for
+    //    centering — the lightbox just needs to be near where the user clicked).
+    // 3. Open instantly with position:absolute so there is zero delay.
+    // 4. Also fire the parent message; if it replies with exact data the handler
+    //    below will reposition to pixel-perfect.
+    const rect    = triggerEl ? triggerEl.getBoundingClientRect() : null;
+    const btnMidY = rect ? rect.top + rect.height / 2
+                         : document.documentElement.scrollHeight / 2;
+    const vhEst   = Math.round(window.screen.height * 0.85); // ~visible area
+    const lbTop   = Math.max(0, btnMidY - vhEst / 2);
+    lb.style.position = 'absolute';
+    lb.style.top      = lbTop + 'px';
+    lb.style.bottom   = 'auto';
+    lb.style.height   = vhEst + 'px';
+    lb.style.setProperty('--lb-vw', window.innerWidth + 'px');
+    lb.style.setProperty('--lb-vh', vhEst + 'px');
+    lb.classList.add('open');
+    // Ask parent for exact viewport data; handler below refines position if it replies.
     try { window.parent.postMessage({ type: 'orion-bsc-lightbox-open' }, '*'); } catch(e) {}
-    setTimeout(() => {
-      if (!_lbParentReplied) $('lightbox').classList.add('open');
-    }, 150);
-    // Store the flag on lbState so the message handler can clear it.
-    lbState._parentReplied = () => { _lbParentReplied = true; };
   } else {
     // Standalone (not in iframe): position:fixed works normally.
-    $('lightbox').classList.add('open');
+    lb.classList.add('open');
   }
 }
 
-// Handle the parent's reply: position the overlay to cover the visible viewport.
+// Handle the parent's reply: reposition the already-open overlay to the exact
+// visible viewport (pixel-perfect refinement of the estimate above).
 window.addEventListener('message', function (e) {
   if (!e.data || e.data.type !== 'orion-bsc-lightbox-ready') return;
-  // Cancel the fallback timeout (if it fired it would be a no-op anyway, but
-  // mark it so we don't open twice).
-  if (typeof lbState._parentReplied === 'function') lbState._parentReplied();
   const lb = $('lightbox');
   const top    = e.data.top    || 0;
   const height = e.data.height || window.innerHeight;
   const width  = e.data.width  || window.innerWidth;
-  // Switch from fixed to absolute, anchored at the visible viewport region.
   lb.style.position = 'absolute';
   lb.style.top      = top + 'px';
   lb.style.bottom   = 'auto';
   lb.style.height   = height + 'px';
-  // Supply real browser-window dimensions to the image size constraints.
   lb.style.setProperty('--lb-vw', width  + 'px');
   lb.style.setProperty('--lb-vh', height + 'px');
+  // Ensure open in case it wasn't already (shouldn't happen, but safe).
   lb.classList.add('open');
 });
 
