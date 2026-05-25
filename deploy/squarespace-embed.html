@@ -9,14 +9,11 @@
     3. Save and preview. The configurator loads inside the block
        and auto-resizes to avoid an inner scrollbar.
 
-  BEFORE PASTING — update the two URLs marked YOURSITE below
-  to your actual Netlify site name (e.g. orion-bsc.netlify.app).
-
   WHAT THE RESIZE MECHANISM DOES:
     The configurator sends a postMessage on every step change
     with its current content height. The script below catches
     those messages and updates the iframe height accordingly,
-    so the Squarespace page never shows a scroll bar inside
+    so the Squarespace page never shows dead space inside
     the embed block.
 
   CLIPBOARD PERMISSION:
@@ -30,14 +27,22 @@
   #orion-bsc-frame {
     display: block;
     width: 100%;
-    min-height: 640px;   /* prevents layout collapse while the configurator loads */
     border: none;
     outline: none;
     overflow: hidden;
-    /* Smooth height transitions prevent Squarespace's layout engine from
-       briefly exposing the section background (white flash) during the
-       instant jump. The ease-out keeps it feeling snappy, not sluggish. */
+    /* Smooth height transitions prevent a jarring jump between steps. */
     transition: height 0.2s ease-out;
+  }
+
+  /*
+    Squarespace's .sqs-block-content wrapper can lock at the tallest height
+    it has ever rendered. Force it to follow the iframe's actual height.
+  */
+  .sqs-block-code,
+  .sqs-block-code > .sqs-block-content,
+  .sqs-block-content:has(#orion-bsc-frame) {
+    height: auto !important;
+    min-height: 0 !important;
   }
 </style>
 
@@ -52,7 +57,6 @@
 <script>
 (function () {
   // Only accept resize messages from the configurator's origin.
-  // Update this if you move the configurator to a different host.
   var ALLOWED_ORIGIN = 'https://cakelesscoder.github.io';
 
   var frame = document.getElementById('orion-bsc-frame');
@@ -66,9 +70,18 @@
     var h = parseInt(data.height, 10);
     if (!isNaN(h) && h > 0) {
       frame.style.height = h + 'px';
+
+      // Also release any Squarespace parent that may have locked to a tall height.
+      var p = frame.parentElement;
+      if (p) {
+        p.style.height = 'auto';
+        p.style.minHeight = '0';
+      }
+      if (p && p.parentElement) {
+        p.parentElement.style.height = 'auto';
+        p.parentElement.style.minHeight = '0';
+      }
     }
   });
 })();
 </script>
-
-</div>
