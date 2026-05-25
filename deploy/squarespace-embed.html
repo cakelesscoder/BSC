@@ -51,6 +51,7 @@
   var ALLOWED_ORIGIN = 'https://cakelesscoder.github.io';
 
   var frame = document.getElementById('orion-bsc-frame');
+  var maxH = 0; // only grow — never shrink the iframe between steps
 
   window.addEventListener('message', function (event) {
     if (event.origin !== ALLOWED_ORIGIN) return;
@@ -59,8 +60,9 @@
     if (!data || data.type !== 'orion-bsc-resize') return;
 
     var h = parseInt(data.height, 10);
-    if (!isNaN(h) && h > 0) {
-      frame.style.height = h + 'px';
+    if (!isNaN(h) && h > maxH) {
+      maxH = h;
+      frame.style.height = maxH + 'px';
     }
   });
 })();

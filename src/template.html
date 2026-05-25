@@ -167,11 +167,14 @@
 
   .step-strip {
     display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
+  .step-strip::-webkit-scrollbar { display: none; }
 
   .step-pill {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 0;
+    min-width: 52px;
     border: none;
     background: transparent;
     color: var(--muted);
@@ -698,7 +701,6 @@
   .app.welcome-mode {
     max-width: 100%;
     padding: 0;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -921,9 +923,8 @@
   /* ---------- Responsive ---------- */
   @media (max-width: 900px) {
     .app { padding: 20px 16px 80px; }
-    .step-strip .step-pill:nth-child(n+8) { display: none; }
     .step-pill .step-label { font-size: 10px; }
-    .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 16px; }
+    .header { padding: 14px 16px; gap: 10px; }
     .brand-divider { display: none; }
     .brand-logo { height: 40px; }
     .welcome { grid-template-columns: 1fr; }
@@ -968,6 +969,7 @@
     --line-soft: #1a3554;
     --muted:     #6090af;
     background: var(--bg);
+    min-height: 100vh; /* fills the iframe when this page is shorter than a previous one */
   }
 
   /* Headings */
@@ -1324,7 +1326,7 @@ function renderWelcome() {
     <div class="welcome">
       <div class="welcome-text">
         <h1>Configure your robotic welding cell</h1>
-        <p>Walk through 10 design decisions and we'll generate a complete specification for your Panasonic robot system, especially designed for welding. Built around our Australian made, internally designed fabricated platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.</p>
+        <p>Walk through 10 design decisions and we'll generate a complete specification for your Panasonic dedicated robot welding system, especially designed for welding. Built around our Australian made, internally designed fabricated platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.</p>
         <div class="stats">
           <div class="stat"><div class="num">10</div><div class="lbl">Steps</div></div>
           <div class="stat"><div class="num">~4</div><div class="lbl">Minutes</div></div>
@@ -1542,7 +1544,7 @@ function renderSummary() {
       <div class="title-block" style="margin-bottom:0;flex:1;">
         <div class="eyebrow">Configuration complete</div>
         <h1>Your welding cell specification</h1>
-        <p>Share this with our team to receive a detailed proposal.</p>
+        <p>Share this with our team to receive a detailed system proposal & pricing.</p>
       </div>
       <div class="summary-actions">
         <a class="btn btn-primary" id="email-quote" href="#">Email for quote</a>
@@ -1561,7 +1563,7 @@ function renderSummary() {
         <div class="spec-sheet">${specHtml}</div>
         <div class="training-note">
           <span class="training-note-icon">★</span>
-          <span><strong>On-site training included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site.</span>
+          <span><strong>On-site training is included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site, on your fabrications.</span>
         </div>
       </div>
       ${heroImgHtml}
@@ -1615,6 +1617,8 @@ function bindWelcome() {
 function bindCommon() {
   const r = $('restart-btn');
   if (r) r.addEventListener('click', resetAll);
+  const activePill = document.querySelector('.step-pill.active');
+  if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
 }
 
 function bindQuestion() {
@@ -1785,6 +1789,19 @@ function postIframeHeight() {
     window.parent.postMessage({ type: 'orion-bsc-resize', height: h }, '*');
   } catch (e) { /* parent on different origin, ignore */ }
 }
+
+// ResizeObserver: re-fires postIframeHeight whenever content height changes —
+// catches option card images loading after the initial render frame, font
+// metrics settling, and any other reflow that requestAnimationFrame misses.
+if (window.parent !== window && typeof ResizeObserver !== 'undefined') {
+  let _roTimer;
+  new ResizeObserver(function () {
+    clearTimeout(_roTimer);
+    _roTimer = setTimeout(postIframeHeight, 50);
+  }).observe(document.documentElement);
+}
+// Belt-and-braces: also fire once everything (images, fonts) is fully loaded.
+window.addEventListener('load', postIframeHeight);
 
 // Lightbox
 let lbState = { qkey: '', imgs: [], idx: 0 };
