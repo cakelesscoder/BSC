@@ -1017,7 +1017,6 @@
     --line-soft: #1a3554;
     --muted:     #6090af;
     background: var(--bg);
-    min-height: 100vh; /* fills the iframe when this page is shorter than a previous one */
   }
 
   /* Headings */
@@ -1350,10 +1349,6 @@ function render() {
     document.documentElement.classList.add('welcome-mode');
     app.innerHTML = renderWelcome();
     bindWelcome();
-    // Tell the parent embed to release the max-height lock so the iframe
-    // shrinks back to welcome's natural content height, not a stale tall value
-    // left over from the summary or a previous deep question page.
-    try { window.parent.postMessage({ type: 'orion-bsc-reset-height' }, '*'); } catch(e) {}
     requestAnimationFrame(postIframeHeight);
     return;
   }

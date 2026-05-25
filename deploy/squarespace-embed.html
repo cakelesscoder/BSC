@@ -56,27 +56,16 @@
   var ALLOWED_ORIGIN = 'https://cakelesscoder.github.io';
 
   var frame = document.getElementById('orion-bsc-frame');
-  var maxH = 0; // only grow between steps; reset to 0 when returning to welcome
 
   window.addEventListener('message', function (event) {
     if (event.origin !== ALLOWED_ORIGIN) return;
 
     var data = event.data;
-    if (!data) return;
-
-    // Welcome screen signals us to release the height lock so the iframe
-    // honestly reflects its natural content height again.
-    if (data.type === 'orion-bsc-reset-height') {
-      maxH = 0;
-      return;
-    }
-
-    if (data.type !== 'orion-bsc-resize') return;
+    if (!data || data.type !== 'orion-bsc-resize') return;
 
     var h = parseInt(data.height, 10);
-    if (!isNaN(h) && h > maxH) {
-      maxH = h;
-      frame.style.height = maxH + 'px';
+    if (!isNaN(h) && h > 0) {
+      frame.style.height = h + 'px';
     }
   });
 })();
