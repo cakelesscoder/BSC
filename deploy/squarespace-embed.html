@@ -34,7 +34,17 @@
     border: none;
     overflow: hidden;
   }
+
+  /* Squarespace code blocks have built-in top/bottom padding that leaves a thin
+     gap between the iframe and the section edges. Pull the iframe flush. */
+  #orion-bsc-wrap {
+    display: block;
+    margin-top: -20px;
+    margin-bottom: -20px;
+  }
 </style>
+
+<div id="orion-bsc-wrap">
 
 <iframe
   id="orion-bsc-frame"
@@ -67,3 +77,5 @@
   });
 })();
 </script>
+
+</div>
