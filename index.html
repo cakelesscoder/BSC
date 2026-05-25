@@ -1,0 +1,2013 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welding Cell Configurator · Orion Automation</title>
+<meta name="description" content="Configure a robotic welding cell from Orion Automation Systems - Panasonic robots, integrated power sources, guarding and tooling. Welding Cell Configurator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Orion Welding Cell Configurator - single-file standalone
+     Image base URL is configured in IMAGE_BASE below. Set it to
+     your GitHub Pages URL (e.g. https://user.github.io/repo)
+     or leave empty to fall back to relative ./images paths.
+     ============================================================ */
+  :root {
+    --orion-blue: #1470af;
+    --orion-blue-dark: #0f5990;
+    --orion-blue-light: #e8f1f8;
+    --orion-yellow: #f5c421;
+    --ink: #0c1827;
+    --ink-soft: #34465a;
+    --muted: #6b7c91;
+    --line: #d8dfe7;
+    --line-soft: #ecf0f4;
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --card: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(12, 24, 39, 0.04), 0 1px 1px rgba(12, 24, 39, 0.03);
+    --shadow-md: 0 4px 12px rgba(12, 24, 39, 0.06), 0 2px 4px rgba(12, 24, 39, 0.04);
+    --shadow-lg: 0 16px 32px rgba(12, 24, 39, 0.08), 0 4px 8px rgba(12, 24, 39, 0.04);
+    --radius: 4px;
+    --radius-lg: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'DM Sans', 'Manrope', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ---------- Layout ---------- */
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 32px 96px;
+  }
+
+  /* ---------- Header ---------- */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 24px;
+    background: var(--ink);
+    border-radius: var(--radius-lg);
+    margin-bottom: 32px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-logo {
+    height: 48px;
+    width: auto;
+    display: block;
+  }
+
+  .brand-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .brand-tag {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+
+  .restart-btn {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    transition: all 0.15s ease;
+  }
+  .restart-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+
+  /* ---------- Title block ---------- */
+  .title-block {
+    margin-bottom: 32px;
+  }
+
+  .title-block .eyebrow {
+    color: var(--orion-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .title-block h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    color: var(--orion-blue);
+  }
+
+  .title-block p {
+    color: var(--ink-soft);
+    font-size: 17px;
+    max-width: 720px;
+    margin: 0;
+  }
+
+  /* ---------- Progress strip ---------- */
+  .progress {
+    margin-bottom: 32px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--line-soft);
+    position: relative;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--orion-blue);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .step-strip {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .step-strip::-webkit-scrollbar { display: none; }
+
+  .step-pill {
+    flex: 1 1 0;
+    min-width: 52px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 4px;
+    text-align: center;
+    border-right: 1px solid var(--line-soft);
+    transition: all 0.15s ease;
+    font-family: inherit;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .step-pill:last-child { border-right: none; }
+  .step-pill:hover:not(:disabled):not(.active) { background: var(--bg); color: var(--ink); }
+  .step-pill:disabled { cursor: not-allowed; opacity: 0.55; }
+
+  .step-pill.active { background: var(--bg); color: var(--orion-blue); }
+  .step-pill.active .step-num { background: var(--orion-blue); color: white; }
+
+  .step-pill.complete { color: var(--ink); }
+  .step-pill.complete .step-num { background: var(--ink); color: white; }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .step-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* ---------- Step transitions ---------- */
+  .step-content {
+    animation: stepIn 0.35s ease both;
+  }
+  .step-content.slide-back {
+    animation: stepInBack 0.35s ease both;
+  }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes stepInBack {
+    from { opacity: 0; transform: translateX(-40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .welcome.exit {
+    animation: welcomeExit 0.45s ease both;
+  }
+  @keyframes welcomeExit {
+    to { opacity: 0; transform: scale(0.97); }
+  }
+
+  .summary {
+    animation: stepIn 0.4s ease both;
+  }
+
+  /* ---------- Question header ---------- */
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .q-meta { flex: 1; min-width: 0; }
+
+  .q-counter {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .q-counter .q-counter-num { color: var(--orion-blue); }
+
+  .q-title {
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.15;
+    color: var(--orion-blue);
+    margin-bottom: 6px;
+  }
+
+  .q-subtitle {
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .q-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .q-actions-sep { width: 16px; }
+
+  .info-toggle {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .info-toggle:hover { border-color: var(--orion-blue); color: var(--orion-blue); }
+  .info-toggle.open { background: var(--orion-blue); color: white; border-color: var(--orion-blue); }
+
+  .info-panel {
+    background: var(--orion-blue-light);
+    border-left: 3px solid var(--orion-blue);
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.6;
+    display: none;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .info-panel.open { display: block; }
+
+  /* ---------- Option grid ---------- */
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .option {
+    border: 2px solid var(--line);
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    width: 100%;
+  }
+  .option:hover {
+    border-color: var(--orion-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .option.selected {
+    border-color: var(--orion-blue);
+    background: var(--orion-blue-light);
+    box-shadow: 0 0 0 3px rgba(20, 112, 175, 0.12);
+  }
+  .option.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .option-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .option-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .option-image img.active { opacity: 1; }
+
+  .option-image-placeholder {
+    color: var(--muted);
+    font-size: 36px;
+    font-weight: 200;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option-photos-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    padding: 9px 16px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--line-soft);
+    color: var(--orion-blue);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .option-photos-btn:hover {
+    background: var(--bg-soft);
+  }
+
+  .option-body {
+    padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .option-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.25;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option-blurb {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .option-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--orion-blue);
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: var(--shadow-sm);
+  }
+  .option.selected .option-check { display: flex; }
+
+  .option-unavailable {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 9px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    border: 1px solid var(--line);
+  }
+
+  /* ---------- Footer nav ---------- */
+  .nav {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .nav-summary {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .nav-summary strong { color: var(--ink); }
+
+  .nav-buttons { display: flex; gap: 12px; }
+
+  .btn {
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a.btn { line-height: 1.2; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover:not(:disabled) { background: var(--bg-soft); color: var(--ink); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--orion-blue);
+    color: white;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--orion-blue-dark); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; background: var(--muted); }
+
+  /* ---------- Summary view (final step) ---------- */
+  .summary {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .code-bar {
+    background: var(--ink);
+    color: white;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', 'DM Sans', monospace;
+  }
+
+  .code-bar-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .code-bar-value {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow-x: auto;
+    flex: 1;
+  }
+
+  .code-bar .btn { flex-shrink: 0; }
+
+  .spec-sheet {
+    columns: 2;
+    column-gap: 32px;
+    margin-top: 20px;
+  }
+
+  .spec-group {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+
+  .spec-group-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+    margin: 0 0 2px 0;
+  }
+
+  .summary-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .summary-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .summary-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .summary-layout .summary { flex: 1; min-width: 0; }
+
+  .summary-hero {
+    width: 260px;
+    flex-shrink: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    align-self: flex-start;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+  }
+  .summary-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .spec-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+    font-size: 14px;
+  }
+  .spec-label {
+    color: var(--muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .spec-label::after { content: ':'; margin-right: 2px; }
+  .spec-value { font-weight: 600; color: var(--ink); }
+
+  .training-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: rgba(20, 112, 175, 0.08);
+    border-left: 3px solid var(--orion-blue);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .training-note strong { color: var(--ink); }
+  .training-note-icon { color: var(--orion-yellow); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  body.config-mode .training-note { background: rgba(20,112,175,0.12); color: #a8c8e0; }
+  body.config-mode .training-note strong { color: #f0f6ff; }
+
+  .config-actions { display: none; }
+
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: inherit;
+    padding: 4px 8px;
+  }
+  .btn-text:hover { color: var(--ink); }
+
+  @media (max-width: 768px) {
+    .spec-sheet { columns: 1; }
+  }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  .copy-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Confirm dialog ---------- */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 24, 39, 0.82);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    padding: 24px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px 28px 24px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+  .confirm-card h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+  .confirm-card p {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* ---------- Welcome screen ---------- */
+  /* --- Welcome: full-viewport dark immersive --- */
+  .app.welcome-mode {
+    max-width: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Ensure html/body are dark in welcome mode so no white bleeds through
+     around or below the welcome panel. No min-height here — we let the
+     iframe size honestly to the welcome content via the reset-height signal. */
+  html.welcome-mode,
+  body.welcome-mode {
+    background: var(--ink);
+  }
+
+  .welcome {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-text {
+    padding: 96px 56px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .welcome-text > * {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: welcomeFadeUp 0.7s ease forwards;
+  }
+  .welcome-text > *:nth-child(1) { animation-delay: 0.15s; }
+  .welcome-text > *:nth-child(2) { animation-delay: 0.3s; }
+  .welcome-text > *:nth-child(3) { animation-delay: 0.45s; }
+  .welcome-text > *:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes welcomeFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome h1 {
+    font-size: clamp(30px, 4.5vw, 48px);
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.08;
+  }
+
+  .welcome p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 480px;
+    margin: 0 0 36px;
+    line-height: 1.65;
+  }
+
+  .welcome .stats {
+    display: flex;
+    gap: 32px;
+    margin: 0 0 40px;
+    flex-wrap: wrap;
+  }
+
+  .welcome .stat {
+    text-align: left;
+  }
+
+  .welcome .stat .num {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--orion-blue);
+    line-height: 1;
+  }
+
+  .welcome .stat .lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .welcome .btn-primary {
+    align-self: flex-start;
+    font-size: 16px;
+    padding: 14px 32px;
+  }
+
+  .welcome-hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    transform: scale(1);
+  }
+
+  .welcome-hero img.active {
+    opacity: 1;
+    animation: kenBurns 8s ease forwards;
+  }
+
+  @keyframes kenBurns {
+    from { transform: scale(1); }
+    to   { transform: scale(1.06); }
+  }
+
+  .welcome-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--ink) 0%, transparent 28%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .welcome-mode .header {
+    background: transparent;
+    border-radius: 0;
+    padding: 24px 32px;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .welcome-mode .header.scrolled-away {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
+
+  /* ---------- Modal lightbox for image gallery ---------- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 24, 39, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    /*
+     * --lb-vw / --lb-vh are set by JS to the *real browser window* dimensions
+     * when the configurator runs inside an iframe (where 100vw/100vh equal the
+     * iframe document size, not the visible window).  When not in an iframe the
+     * properties are absent and the calc() falls back to 100vw/100vh, which are
+     * correct in that context.
+     *
+     * Clearances:
+     *   Horizontal: nav buttons are 56 px wide at left/right:24px → 80px each side.
+     *               Use 96px to give a comfortable gap (192px total).
+     *   Vertical:   close button is at top:24px, h:44px → 68px from top.
+     *               Counter is at bottom:24px, h:~32px → ~56px from bottom.
+     *               Use 72px each side (144px total) which covers both.
+     */
+    max-width:  calc(var(--lb-vw, 100vw) - 192px);
+    max-height: calc(var(--lb-vh, 100vh) - 144px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: var(--shadow-lg);
+    display: block;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border-radius: 50%;
+    font-size: 22px;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 28px;
+    border-radius: 50%;
+    backdrop-filter: blur(8px);
+  }
+  .lightbox-nav.prev { left: 24px; }
+  .lightbox-nav.next { right: 24px; }
+  .lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 13px;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+
+  /* ---------- View image gallery on selected option ---------- */
+  .gallery-strip {
+    display: flex;
+    gap: 8px;
+    padding: 12px 18px 16px;
+    overflow-x: auto;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+  }
+  .gallery-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    flex-shrink: 0;
+    cursor: pointer;
+    background: white;
+    padding: 0;
+  }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery-thumb:hover { border-color: var(--orion-blue); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .app { padding: 20px 16px 80px; }
+    .step-pill .step-label { font-size: 10px; }
+    .header { padding: 14px 16px; gap: 10px; }
+    .brand-divider { display: none; }
+    .brand-logo { height: 40px; }
+    .welcome { grid-template-columns: 1fr; }
+    .welcome-text { padding: 36px 24px; }
+    .welcome-hero { min-height: 300px; }
+    .welcome-hero::after { display: none; } /* full image on mobile — no text column to blend with */
+    .q-header { flex-direction: column; gap: 16px; }
+    .q-actions { align-self: flex-start; flex-wrap: wrap; }
+    .spec-sheet { columns: 1; }
+    .summary-page-header { flex-direction: column; gap: 16px; }
+    .summary-actions { align-self: flex-start; flex-wrap: wrap; justify-content: flex-start; }
+    .summary-layout { flex-direction: column; }
+    .summary-hero { width: 100%; aspect-ratio: 16 / 6; order: -1; }
+  }
+
+  @media (max-width: 540px) {
+    .options { grid-template-columns: 1fr; }
+    .step-strip { display: none; }
+    .progress { padding: 10px 14px; }
+    .progress::after {
+      content: attr(data-progress);
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .header { padding: 12px 14px; gap: 8px; }
+    .brand-logo { height: 32px; }
+    .brand-tag { font-size: 10px; letter-spacing: 0.08em; }
+    .restart-btn { font-size: 12px; padding: 6px 10px; }
+  }
+
+  /* ================================================================
+     Dark theme — config / question / summary pages
+     Applied by toggling body.config-mode in render()
+     ================================================================ */
+  html.config-mode { background: #0b1929; }
+  body.config-mode {
+    --bg:        #0b1929;
+    --bg-soft:   #0f2137;
+    --card:      #152c48;
+    --line:      #234669;
+    --line-soft: #1a3554;
+    --muted:     #6090af;
+    background: var(--bg);
+  }
+
+  /* Headings */
+  body.config-mode h1,
+  body.config-mode h2,
+  body.config-mode h3,
+  body.config-mode h4 { color: #f0f6ff; }
+
+  body.config-mode .title-block h1  { color: var(--orion-blue); }
+  body.config-mode .title-block p   { color: #a8c8e0; }
+  body.config-mode .q-title          { color: var(--orion-blue); }
+  body.config-mode .q-subtitle       { color: #a8c8e0; }
+  body.config-mode .q-counter        { color: var(--muted); }
+
+  /* Step strip */
+  body.config-mode .step-pill { color: var(--muted); }
+  body.config-mode .step-pill:hover:not(:disabled):not(.active) { background: var(--card); color: #f0f6ff; }
+  body.config-mode .step-pill.active  { background: var(--card); }
+  body.config-mode .step-pill.complete { color: #f0f6ff; }
+  body.config-mode .step-pill.complete .step-num { background: var(--orion-blue); color: #fff; }
+  body.config-mode .step-num { background: var(--line); color: var(--muted); }
+
+  /* Option cards */
+  body.config-mode .option { background: var(--card); border-color: var(--line); }
+  body.config-mode .option:hover:not(.disabled) { border-color: var(--orion-blue); background: #1a3558; }
+  body.config-mode .option.selected {
+    background: rgba(20,112,175,0.22);
+    border-color: var(--orion-blue);
+    box-shadow: 0 0 0 3px rgba(20,112,175,0.18);
+  }
+  body.config-mode .option-title  { color: #f0f6ff; }
+  body.config-mode .option-blurb  { color: #a8c8e0; }
+  body.config-mode .option-image  { background: #0d1e33; }
+  body.config-mode .option-unavailable {
+    background: rgba(11,25,41,0.88);
+    color: #a8c8e0;
+    border-color: var(--line);
+  }
+
+  /* Info toggle + panel */
+  body.config-mode .info-toggle { background: var(--card); border-color: #3a6080; color: #c4ddf0; }
+  body.config-mode .info-toggle:hover { border-color: var(--orion-blue); color: var(--orion-blue); }
+  body.config-mode .info-toggle.open  { background: var(--orion-blue); color: #fff; border-color: var(--orion-blue); }
+  body.config-mode .info-panel {
+    background: rgba(20,112,175,0.1);
+    border-left-color: var(--orion-blue);
+    color: #a8c8e0;
+  }
+
+  /* Footer nav + buttons */
+  body.config-mode .nav { border-top-color: var(--line); }
+  body.config-mode .nav-summary        { color: var(--muted); }
+  body.config-mode .nav-summary strong { color: #f0f6ff; }
+  body.config-mode .btn-secondary      { color: #c4ddf0; border-color: #3a6080; }
+  body.config-mode .btn-secondary:hover:not(:disabled) { background: var(--card); color: #fff; border-color: #5090b8; }
+  body.config-mode .btn-primary        { background: #1a85cc; }
+  body.config-mode .btn-primary:hover:not(:disabled) { background: #1470af; }
+
+  /* Summary page */
+  body.config-mode .summary      { background: var(--card); border-color: var(--line); }
+  body.config-mode .spec-group-title { color: var(--muted); border-bottom-color: var(--line); }
+  body.config-mode .spec-label   { color: var(--muted); }
+  body.config-mode .spec-value   { color: #f0f6ff; }
+  body.config-mode .spec-label { color: var(--muted); }
+  body.config-mode .spec-value { color: #f0f6ff; }
+  body.config-mode .btn-text     { color: var(--muted); }
+  body.config-mode .btn-text:hover { color: #f0f6ff; }
+
+  /* ---------- Print styles for the summary ---------- */
+  @media print {
+    .progress, .nav, .summary-actions, .info-toggle, .restart-btn { display: none !important; }
+    .header { background: var(--ink) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    body { background: white; }
+    .app { max-width: 100%; padding: 0; }
+    .summary { border: none; padding: 0; background: white; box-shadow: none; }
+    .code-bar { background: white !important; border: 2px solid var(--ink) !important; color: var(--ink) !important; }
+    .code-bar-label { color: var(--muted) !important; }
+    .spec-sheet { columns: 2 !important; }
+    .summary-hero { display: none; }
+    .title-block p { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lb-close" aria-label="Close">×</button>
+  <button class="lightbox-nav prev" id="lb-prev" aria-label="Previous">‹</button>
+  <img id="lb-img" alt="">
+  <button class="lightbox-nav next" id="lb-next" aria-label="Next">›</button>
+  <div class="lightbox-counter" id="lb-counter"></div>
+</div>
+
+<div class="confirm-overlay" id="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="confirm-card">
+    <h3 id="confirm-title">Start over?</h3>
+    <p>Your current configuration will be cleared.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-primary" id="confirm-ok">Start over</button>
+    </div>
+  </div>
+</div>
+
+<div class="copy-toast" id="toast">Copied to clipboard</div>
+
+<script>
+/* ============================================================
+   CONFIGURATION
+   Set IMAGE_BASE to your hosted images URL when deploying.
+   For GitHub Pages it will look like:
+     https://your-username.github.io/orion-bsc/images
+   Leave empty for local testing with a sibling /images folder.
+   ============================================================ */
+const IMAGE_BASE = 'https://cakelesscoder.github.io/BSC/images';   // e.g. 'https://lachlan.github.io/orion-bsc/images'
+
+// Set to true to show the branded header bar (logo + "Welding Cell Configurator")
+// above each question and on the welcome screen. Currently hidden because the
+// Squarespace site provides its own navigation and the double-header is redundant.
+const SHOW_HEADER = false;
+
+// Image-load error fallback. Called from inline onerror handlers.
+window.handleImgError = function(img, icon) {
+  const parent = img.parentElement;
+  if (!parent) return;
+  // If there are sibling images that loaded fine, just remove this broken one
+  const siblings = parent.querySelectorAll('img');
+  if (siblings.length > 1) {
+    const wasActive = img.classList.contains('active');
+    img.remove();
+    if (wasActive) {
+      const remaining = parent.querySelector('img');
+      if (remaining) remaining.classList.add('active');
+    }
+  } else {
+    parent.innerHTML = '<div class="option-image-placeholder">' + (icon || '-') + '</div>';
+  }
+};
+
+// All static configurator data - generated by build.py from /data/*.json
+/* @@DATA_START@@ */ const DATA = {"questions":[{"n":1,"key":"process","title":"Welding Process","subtitle":"MIG or TIG?","short":"Process","folder":"01-process","icon":"⚡"},{"n":2,"key":"material","title":"Material","subtitle":"Which materials will you be welding?","short":"Material","folder":"02-material","icon":"⛓"},{"n":3,"key":"reach","title":"Robot Arm Reach","subtitle":"Which manipulator best fits your work envelope?","short":"Reach","folder":"03-reach","icon":"⤴"},{"n":4,"key":"amperage","title":"Power Source Capacity","subtitle":"350 amp standard, or 500 amp for heavier duty?","short":"Power","folder":"04-amperage","icon":"⚡"},{"n":5,"key":"cooling","title":"Torch Cooling","subtitle":"Gas cooled or water cooled torch?","short":"Cooling","folder":"05-cooling","icon":"❄"},{"n":6,"key":"fume","title":"Fume Extraction","subtitle":"Integrated fume extraction torch and filter?","short":"Fume","folder":"07-fume","icon":"≋"},{"n":7,"key":"wire","title":"Wire Supply","subtitle":"Wire reel, covered reel, or marathon drum pack?","short":"Wire","folder":"08-wire","icon":"◯"},{"n":8,"key":"touch","title":"Touch Sensing","subtitle":"Need touch sense searching for jig variation?","short":"Touch","folder":"09-touch","icon":"⊙"},{"n":9,"key":"tables","title":"Jig Tables","subtitle":"How many table frames mounted in the cell?","short":"Tables","folder":"10-tables","icon":"▭"},{"n":10,"key":"guarding","title":"Guarding Design","subtitle":"Which guarding configuration suits your workflow?","short":"Guarding","folder":"11-guarding","icon":"⚙"}],"options":{"process":{"101":"MIG","102":"TIG"},"material":{"151":"Mild Steel","152":"Stainless Steel","153":"Aluminium","154":"Galvanised steel","155":"Titanium & other specialised materials","156":"Hard-facing and wear buildup"},"reach":{"201":"TM1400","202":"TM1800","203":"TM2000","204":"TL1800","205":"TL2000"},"amperage":{"251":"350 Amp","252":"500 Amp"},"cooling":{"301":"Gas Cooled","302":"Water Cooled"},"conduit":{"351":"Separate","352":"Through Arm","353":"External"},"fume":{"401":"With Fume Extraction","402":"No Fume Extraction"},"wire":{"451":"Wire reel","452":"Wire Reel with cover","453":"Drum Pack"},"touch":{"501":"Require Touch Sensing","502":"Not required"},"tables":{"551":"1 x Jig Table Frame","552":"2 x Jig Table Frames"},"guarding":{"651":"Full Guard, Posts & Panels - Light Curtain 1 Table with panel on frame","652":"Full Guard, Posts & Panels - Light Curtain 1 Table as two parallel walls","653":"Full Guard, Posts & Panels - Light Curtain 2 Tables with panel on frame","654":"Full Guard, Posts & Panels - Light Curtain 2 Tables as two parallel walls","655":"2 Posts - Light Curtain 1 Table","656":"2 Posts - Light Curtain 2 Tables"},"install":{"701":"Installation by customer","702":"Installation by Orion Automation"},"training":{"751":"At Orion VIC","752":"At Customer site","753":"No training required as not first system"}},"order":{"process":["101","102"],"material":["151","152","153","154","155","156"],"reach":["201","202","203","204","205"],"amperage":["251","252"],"cooling":["301","302"],"conduit":["351","352","353"],"fume":["401","402"],"wire":["451","452","453"],"touch":["501","502"],"tables":["551","552"],"guarding":["651","652","653","654","655","656"],"install":["701","702"],"training":["751","752","753"]},"rules":{"process":[["101",[]],["102",[]]],"material":[["151",["101"]],["151",["102"]],["152",["101"]],["152",["102"]],["153",["101"]],["153",["102"]],["154",["101"]],["154",["102"]],["155",["101"]],["155",["102"]],["156",["101"]],["156",["102"]]],"reach":[["201",["101","151"]],["201",["101","153"]],["201",["102","153"]],["202",["101","151"]],["202",["101","153"]],["203",["101","151"]],["203",["101","153"]],["204",["101","151"]],["204",["101","153"]],["204",["102","153"]],["205",["101","151"]],["205",["101","153"]]],"amperage":[["251",["101","151","201"]],["251",["101","153","201"]],["251",["102","153","201"]],["252",["101","151","201"]]],"cooling":[["301",["101","151","201","251"]],["301",["101","151","204","251"]],["301",["101","153","201","251"]],["302",["101","151","201","252"]],["302",["101","151","204","251"]],["302",["101","153","201","251"]],["302",["101","153","204","251"]]],"conduit":[["351",["101","151","201","251","301"]],["351",["101","153","201","251","301"]],["351",["101","151","201","252","302"]],["352",["101","151","201","251","301"]],["352",["101","153","201","251","301"]],["353",["101","151","204","251","302"]],["353",["101","153","204","251","302"]]],"fume":[["401",["101","151","201","251","301","351"]],["401",["101","153","201","251","301","351"]],["401",["101","151","201","252","302","351"]],["402",["101","151","201","251","301","351"]],["402",["101","153","201","251","301","351"]],["402",["101","151","201","252","302","351"]]],"wire":[["451",["101","151","201","251","301","351"]],["451",["101","151","201","252","302","351"]],["452",["101","151","201","251","301","351"]],["452",["101","153","201","251","301","351"]],["452",["101","151","201","252","302","351"]],["453",["101","151","201","251","301","351"]],["453",["101","151","201","252","302","351"]]],"touch":[["501",["101","151","201","251","301","351","401","451"]],["501",["101","151","201","252","302","351","401","451"]],["501",["101","151","201","251","301","351","402","451"]],["501",["101","151","201","252","302","351","402","451"]],["501",["101","151","201","251","301","351","401","452"]],["501",["101","153","201","251","301","351","401","452"]],["501",["101","151","201","252","302","351","401","452"]],["501",["101","151","201","251","301","351","402","452"]],["501",["101","153","201","251","301","351","402","452"]],["501",["101","151","201","252","302","351","402","452"]],["501",["101","151","201","251","301","351","401","453"]],["501",["101","151","201","252","302","351","401","453"]],["501",["101","151","201","251","301","351","402","453"]],["501",["101","151","201","252","302","351","402","453"]],["502",["101","151","201","251","301","351","401","451"]],["502",["101","151","201","252","302","351","401","451"]],["502",["101","151","201","251","301","351","402","451"]],["502",["101","151","201","252","302","351","402","451"]],["502",["101","151","201","251","301","351","401","452"]],["502",["101","153","201","251","301","351","401","452"]],["502",["101","151","201","252","302","351","401","452"]],["502",["101","151","201","251","301","351","402","452"]],["502",["101","153","201","251","301","351","402","452"]],["502",["101","151","201","252","302","351","402","452"]],["502",["101","151","201","251","301","351","401","453"]],["502",["101","151","201","252","302","351","401","453"]],["502",["101","151","201","251","301","351","402","453"]],["502",["101","151","201","252","302","351","402","453"]]],"tables":[["551",["101","151","201","251","301","351","401","451","501"]],["551",["101","151","201","252","302","351","401","451","501"]],["551",["101","151","201","251","301","351","402","451","501"]],["551",["101","151","201","252","302","351","402","451","501"]],["551",["101","151","201","251","301","351","401","452","501"]],["551",["101","153","201","251","301","351","401","452","501"]],["551",["101","151","201","252","302","351","401","452","501"]],["551",["101","151","201","251","301","351","402","452","501"]],["551",["101","153","201","251","301","351","402","452","501"]],["551",["101","151","201","252","302","351","402","452","501"]],["551",["101","151","201","251","301","351","401","453","501"]],["551",["101","151","201","252","302","351","401","453","501"]],["551",["101","151","201","251","301","351","402","453","501"]],["551",["101","151","201","252","302","351","402","453","501"]],["551",["101","151","201","251","301","351","401","451","502"]],["551",["101","151","201","252","302","351","401","451","502"]],["551",["101","151","201","251","301","351","402","451","502"]],["551",["101","151","201","252","302","351","402","451","502"]],["551",["101","151","201","251","301","351","401","452","502"]],["551",["101","153","201","251","301","351","401","452","502"]],["551",["101","151","201","252","302","351","401","452","502"]],["551",["101","151","201","251","301","351","402","452","502"]],["551",["101","153","201","251","301","351","402","452","502"]],["551",["101","151","201","252","302","351","402","452","502"]],["551",["101","151","201","251","301","351","401","453","502"]],["551",["101","151","201","252","302","351","401","453","502"]],["551",["101","151","201","251","301","351","402","453","502"]],["551",["101","151","201","252","302","351","402","453","502"]],["552",["101","151","201","251","301","351","401","451","501"]],["552",["101","151","201","252","302","351","401","451","501"]],["552",["101","151","201","251","301","351","402","451","501"]],["552",["101","151","201","252","302","351","402","451","501"]],["552",["101","151","201","251","301","351","401","452","501"]],["552",["101","153","201","251","301","351","401","452","501"]],["552",["101","151","201","252","302","351","401","452","501"]],["552",["101","151","201","251","301","351","402","452","501"]],["552",["101","153","201","251","301","351","402","452","501"]],["552",["101","151","201","252","302","351","402","452","501"]],["552",["101","151","201","251","301","351","401","453","501"]],["552",["101","151","201","252","302","351","401","453","501"]],["552",["101","151","201","251","301","351","402","453","501"]],["552",["101","151","201","252","302","351","402","453","501"]],["552",["101","151","201","251","301","351","401","451","502"]],["552",["101","151","201","252","302","351","401","451","502"]],["552",["101","151","201","251","301","351","402","451","502"]],["552",["101","151","201","252","302","351","402","451","502"]],["552",["101","151","201","251","301","351","401","452","502"]],["552",["101","153","201","251","301","351","401","452","502"]],["552",["101","151","201","252","302","351","401","452","502"]],["552",["101","151","201","251","301","351","402","452","502"]],["552",["101","153","201","251","301","351","402","452","502"]],["552",["101","151","201","252","302","351","402","452","502"]],["552",["101","151","201","251","301","351","401","453","502"]],["552",["101","151","201","252","302","351","401","453","502"]],["552",["101","151","201","251","301","351","402","453","502"]],["552",["101","151","201","252","302","351","402","453","502"]]],"guarding":[["651",["101","151","201","251","301","351","401","451","501","551"]],["651",["101","151","201","252","302","351","401","451","501","551"]],["651",["101","151","201","251","301","351","402","451","501","551"]],["651",["101","151","201","252","302","351","402","451","501","551"]],["651",["101","151","201","251","301","351","401","452","501","551"]],["651",["101","153","201","251","301","351","401","452","501","551"]],["651",["101","151","201","252","302","351","401","452","501","551"]],["651",["101","151","201","251","301","351","402","452","501","551"]],["651",["101","153","201","251","301","351","402","452","501","551"]],["651",["101","151","201","252","302","351","402","452","501","551"]],["651",["101","151","201","251","301","351","401","453","501","551"]],["651",["101","151","201","252","302","351","401","453","501","551"]],["651",["101","151","201","251","301","351","402","453","501","551"]],["651",["101","151","201","252","302","351","402","453","501","551"]],["651",["101","151","201","251","301","351","401","451","502","551"]],["651",["101","151","201","252","302","351","401","451","502","551"]],["651",["101","151","201","251","301","351","402","451","502","551"]],["651",["101","151","201","252","302","351","402","451","502","551"]],["651",["101","151","201","251","301","351","401","452","502","551"]],["651",["101","153","201","251","301","351","401","452","502","551"]],["651",["101","151","201","252","302","351","401","452","502","551"]],["651",["101","151","201","251","301","351","402","452","502","551"]],["651",["101","153","201","251","301","351","402","452","502","551"]],["651",["101","151","201","252","302","351","402","452","502","551"]],["651",["101","151","201","251","301","351","401","453","502","551"]],["651",["101","151","201","252","302","351","401","453","502","551"]],["651",["101","151","201","251","301","351","402","453","502","551"]],["651",["101","151","201","252","302","351","402","453","502","551"]],["651",["101","151","201","251","301","351","401","451","501","552"]],["651",["101","151","201","252","302","351","401","451","501","552"]],["651",["101","151","201","251","301","351","402","451","501","552"]],["651",["101","151","201","252","302","351","402","451","501","552"]],["651",["101","151","201","251","301","351","401","452","501","552"]],["651",["101","153","201","251","301","351","401","452","501","552"]],["651",["101","151","201","252","302","351","401","452","501","552"]],["651",["101","151","201","251","301","351","402","452","501","552"]],["651",["101","153","201","251","301","351","402","452","501","552"]],["651",["101","151","201","252","302","351","402","452","501","552"]],["651",["101","151","201","251","301","351","401","453","501","552"]],["651",["101","151","201","252","302","351","401","453","501","552"]],["651",["101","151","201","251","301","351","402","453","501","552"]],["651",["101","151","201","252","302","351","402","453","501","552"]],["651",["101","151","201","251","301","351","401","451","502","552"]],["651",["101","151","201","252","302","351","401","451","502","552"]],["651",["101","151","201","251","301","351","402","451","502","552"]],["651",["101","151","201","252","302","351","402","451","502","552"]],["651",["101","151","201","251","301","351","401","452","502","552"]],["651",["101","153","201","251","301","351","401","452","502","552"]],["651",["101","151","201","252","302","351","401","452","502","552"]],["651",["101","151","201","251","301","351","402","452","502","552"]],["651",["101","153","201","251","301","351","402","452","502","552"]],["651",["101","151","201","252","302","351","402","452","502","552"]],["651",["101","151","201","251","301","351","401","453","502","552"]],["651",["101","151","201","252","302","351","401","453","502","552"]],["651",["101","151","201","251","301","351","402","453","502","552"]],["651",["101","151","201","252","302","351","402","453","502","552"]],["651",["101","151","201","251","301","351","401","451","501","551"]],["651",["101","151","201","252","302","351","401","451","501","551"]],["651",["101","151","201","251","301","351","402","451","501","551"]],["651",["101","151","201","252","302","351","402","451","501","551"]],["651",["101","151","201","251","301","351","401","452","501","551"]],["651",["101","153","201","251","301","351","401","452","501","551"]],["651",["101","151","201","252","302","351","401","452","501","551"]],["651",["101","151","201","251","301","351","402","452","501","551"]],["651",["101","153","201","251","301","351","402","452","501","551"]],["651",["101","151","201","252","302","351","402","452","501","551"]],["651",["101","151","201","251","301","351","401","453","501","551"]],["651",["101","151","201","252","302","351","401","453","501","551"]],["651",["101","151","201","251","301","351","402","453","501","551"]],["651",["101","151","201","252","302","351","402","453","501","551"]],["651",["101","151","201","251","301","351","401","451","502","551"]],["651",["101","151","201","252","302","351","401","451","502","551"]],["651",["101","151","201","251","301","351","402","451","502","551"]],["651",["101","151","201","252","302","351","402","451","502","551"]],["651",["101","151","201","251","301","351","401","452","502","551"]],["651",["101","153","201","251","301","351","401","452","502","551"]],["651",["101","151","201","252","302","351","401","452","502","551"]],["651",["101","151","201","251","301","351","402","452","502","551"]],["651",["101","153","201","251","301","351","402","452","502","551"]],["651",["101","151","201","252","302","351","402","452","502","551"]],["651",["101","151","201","251","301","351","401","453","502","551"]],["651",["101","151","201","252","302","351","401","453","502","551"]],["651",["101","151","201","251","301","351","402","453","502","551"]],["651",["101","151","201","252","302","351","402","453","502","551"]],["651",["101","151","201","251","301","351","401","451","501","552"]],["651",["101","151","201","252","302","351","401","451","501","552"]],["651",["101","151","201","251","301","351","402","451","501","552"]],["651",["101","151","201","252","302","351","402","451","501","552"]],["651",["101","151","201","251","301","351","401","452","501","552"]],["651",["101","153","201","251","301","351","401","452","501","552"]],["651",["101","151","201","252","302","351","401","452","501","552"]],["651",["101","151","201","251","301","351","402","452","501","552"]],["651",["101","153","201","251","301","351","402","452","501","552"]],["651",["101","151","201","252","302","351","402","452","501","552"]],["651",["101","151","201","251","301","351","401","453","501","552"]],["651",["101","151","201","252","302","351","401","453","501","552"]],["651",["101","151","201","251","301","351","402","453","501","552"]],["651",["101","151","201","252","302","351","402","453","501","552"]],["651",["101","151","201","251","301","351","401","451","502","552"]],["651",["101","151","201","252","302","351","401","451","502","552"]],["651",["101","151","201","251","301","351","402","451","502","552"]],["651",["101","151","201","252","302","351","402","451","502","552"]],["651",["101","151","201","251","301","351","401","452","502","552"]],["651",["101","153","201","251","301","351","401","452","502","552"]],["651",["101","151","201","252","302","351","401","452","502","552"]],["651",["101","151","201","251","301","351","402","452","502","552"]],["651",["101","153","201","251","301","351","402","452","502","552"]],["651",["101","151","201","252","302","351","402","452","502","552"]],["651",["101","151","201","251","301","351","401","453","502","552"]],["651",["101","151","201","252","302","351","401","453","502","552"]],["651",["101","151","201","251","301","351","402","453","502","552"]],["651",["101","151","201","252","302","351","402","453","502","552"]],["651",["101","151","201","251","301","351","401","451","501","551"]],["651",["101","151","201","252","302","351","401","451","501","551"]],["651",["101","151","201","251","301","351","402","451","501","551"]],["651",["101","151","201","252","302","351","402","451","501","551"]],["651",["101","151","201","251","301","351","401","452","501","551"]],["651",["101","153","201","251","301","351","401","452","501","551"]],["651",["101","151","201","252","302","351","401","452","501","551"]],["651",["101","151","201","251","301","351","402","452","501","551"]],["651",["101","153","201","251","301","351","402","452","501","551"]],["651",["101","151","201","252","302","351","402","452","501","551"]],["651",["101","151","201","251","301","351","401","453","501","551"]],["651",["101","151","201","252","302","351","401","453","501","551"]],["651",["101","151","201","251","301","351","402","453","501","551"]],["651",["101","151","201","252","302","351","402","453","501","551"]],["651",["101","151","201","251","301","351","401","451","502","551"]],["651",["101","151","201","252","302","351","401","451","502","551"]],["651",["101","151","201","251","301","351","402","451","502","551"]],["651",["101","151","201","252","302","351","402","451","502","551"]],["651",["101","151","201","251","301","351","401","452","502","551"]],["651",["101","153","201","251","301","351","401","452","502","551"]],["651",["101","151","201","252","302","351","401","452","502","551"]],["651",["101","151","201","251","301","351","402","452","502","551"]],["651",["101","153","201","251","301","351","402","452","502","551"]],["651",["101","151","201","252","302","351","402","452","502","551"]],["651",["101","151","201","251","301","351","401","453","502","551"]],["651",["101","151","201","252","302","351","401","453","502","551"]],["651",["101","151","201","251","301","351","402","453","502","551"]],["651",["101","151","201","252","302","351","402","453","502","551"]],["651",["101","151","201","251","301","351","401","451","501","552"]],["651",["101","151","201","252","302","351","401","451","501","552"]],["651",["101","151","201","251","301","351","402","451","501","552"]],["651",["101","151","201","252","302","351","402","451","501","552"]],["651",["101","151","201","251","301","351","401","452","501","552"]],["651",["101","153","201","251","301","351","401","452","501","552"]],["651",["101","151","201","252","302","351","401","452","501","552"]],["651",["101","151","201","251","301","351","402","452","501","552"]],["651",["101","153","201","251","301","351","402","452","501","552"]],["651",["101","151","201","252","302","351","402","452","501","552"]],["651",["101","151","201","251","301","351","401","453","501","552"]],["651",["101","151","201","252","302","351","401","453","501","552"]],["651",["101","151","201","251","301","351","402","453","501","552"]],["651",["101","151","201","252","302","351","402","453","501","552"]],["651",["101","151","201","251","301","351","401","451","502","552"]],["651",["101","151","201","252","302","351","401","451","502","552"]],["651",["101","151","201","251","301","351","402","451","502","552"]],["651",["101","151","201","252","302","351","402","451","502","552"]],["651",["101","151","201","251","301","351","401","452","502","552"]],["651",["101","153","201","251","301","351","401","452","502","552"]],["651",["101","151","201","252","302","351","401","452","502","552"]],["651",["101","151","201","251","301","351","402","452","502","552"]],["651",["101","153","201","251","301","351","402","452","502","552"]],["651",["101","151","201","252","302","351","402","452","502","552"]],["651",["101","151","201","251","301","351","401","453","502","552"]],["651",["101","151","201","252","302","351","401","453","502","552"]],["651",["101","151","201","251","301","351","402","453","502","552"]],["651",["101","151","201","252","302","351","402","453","502","552"]]],"install":[["702",["101","151","201","251","301","351","401","451","501","551","651"]],["702",["101","151","201","252","302","351","401","451","501","551","651"]],["702",["101","151","201","251","301","351","402","451","501","551","651"]],["702",["101","151","201","252","302","351","402","451","501","551","651"]],["702",["101","151","201","251","301","351","401","452","501","551","651"]],["702",["101","153","201","251","301","351","401","452","501","551","651"]],["702",["101","151","201","252","302","351","401","452","501","551","651"]],["702",["101","151","201","251","301","351","402","452","501","551","651"]],["702",["101","153","201","251","301","351","402","452","501","551","651"]],["702",["101","151","201","252","302","351","402","452","501","551","651"]],["702",["101","151","201","251","301","351","401","453","501","551","651"]],["702",["101","151","201","252","302","351","401","453","501","551","651"]],["702",["101","151","201","251","301","351","402","453","501","551","651"]],["702",["101","151","201","252","302","351","402","453","501","551","651"]],["702",["101","151","201","251","301","351","401","451","502","551","651"]],["702",["101","151","201","252","302","351","401","451","502","551","651"]],["702",["101","151","201","251","301","351","402","451","502","551","651"]],["702",["101","151","201","252","302","351","402","451","502","551","651"]],["702",["101","151","201","251","301","351","401","452","502","551","651"]],["702",["101","153","201","251","301","351","401","452","502","551","651"]],["702",["101","151","201","252","302","351","401","452","502","551","651"]],["702",["101","151","201","251","301","351","402","452","502","551","651"]],["702",["101","153","201","251","301","351","402","452","502","551","651"]],["702",["101","151","201","252","302","351","402","452","502","551","651"]],["702",["101","151","201","251","301","351","401","453","502","551","651"]],["702",["101","151","201","252","302","351","401","453","502","551","651"]],["702",["101","151","201","251","301","351","402","453","502","551","651"]],["702",["101","151","201","252","302","351","402","453","502","551","651"]],["702",["101","151","201","251","301","351","401","451","501","552","651"]],["702",["101","151","201","252","302","351","401","451","501","552","651"]],["702",["101","151","201","251","301","351","402","451","501","552","651"]],["702",["101","151","201","252","302","351","402","451","501","552","651"]],["702",["101","151","201","251","301","351","401","452","501","552","651"]],["702",["101","153","201","251","301","351","401","452","501","552","651"]],["702",["101","151","201","252","302","351","401","452","501","552","651"]],["702",["101","151","201","251","301","351","402","452","501","552","651"]],["702",["101","153","201","251","301","351","402","452","501","552","651"]],["702",["101","151","201","252","302","351","402","452","501","552","651"]],["702",["101","151","201","251","301","351","401","453","501","552","651"]],["702",["101","151","201","252","302","351","401","453","501","552","651"]],["702",["101","151","201","251","301","351","402","453","501","552","651"]],["702",["101","151","201","252","302","351","402","453","501","552","651"]],["702",["101","151","201","251","301","351","401","451","502","552","651"]],["702",["101","151","201","252","302","351","401","451","502","552","651"]],["702",["101","151","201","251","301","351","402","451","502","552","651"]],["702",["101","151","201","252","302","351","402","451","502","552","651"]],["702",["101","151","201","251","301","351","401","452","502","552","651"]],["702",["101","153","201","251","301","351","401","452","502","552","651"]],["702",["101","151","201","252","302","351","401","452","502","552","651"]],["702",["101","151","201","251","301","351","402","452","502","552","651"]],["702",["101","153","201","251","301","351","402","452","502","552","651"]],["702",["101","151","201","252","302","351","402","452","502","552","651"]],["702",["101","151","201","251","301","351","401","453","502","552","651"]],["702",["101","151","201","252","302","351","401","453","502","552","651"]],["702",["101","151","201","251","301","351","402","453","502","552","651"]],["702",["101","151","201","252","302","351","402","453","502","552","651"]],["702",["101","151","201","251","301","351","401","451","501","551","651"]],["702",["101","151","201","252","302","351","401","451","501","551","651"]],["702",["101","151","201","251","301","351","402","451","501","551","651"]],["702",["101","151","201","252","302","351","402","451","501","551","651"]],["702",["101","151","201","251","301","351","401","452","501","551","651"]],["702",["101","153","201","251","301","351","401","452","501","551","651"]],["702",["101","151","201","252","302","351","401","452","501","551","651"]],["702",["101","151","201","251","301","351","402","452","501","551","651"]],["702",["101","153","201","251","301","351","402","452","501","551","651"]],["702",["101","151","201","252","302","351","402","452","501","551","651"]],["702",["101","151","201","251","301","351","401","453","501","551","651"]],["702",["101","151","201","252","302","351","401","453","501","551","651"]],["702",["101","151","201","251","301","351","402","453","501","551","651"]],["702",["101","151","201","252","302","351","402","453","501","551","651"]],["702",["101","151","201","251","301","351","401","451","502","551","651"]],["702",["101","151","201","252","302","351","401","451","502","551","651"]],["702",["101","151","201","251","301","351","402","451","502","551","651"]],["702",["101","151","201","252","302","351","402","451","502","551","651"]],["702",["101","151","201","251","301","351","401","452","502","551","651"]],["702",["101","153","201","251","301","351","401","452","502","551","651"]],["702",["101","151","201","252","302","351","401","452","502","551","651"]],["702",["101","151","201","251","301","351","402","452","502","551","651"]],["702",["101","153","201","251","301","351","402","452","502","551","651"]],["702",["101","151","201","252","302","351","402","452","502","551","651"]],["702",["101","151","201","251","301","351","401","453","502","551","651"]],["702",["101","151","201","252","302","351","401","453","502","551","651"]],["702",["101","151","201","251","301","351","402","453","502","551","651"]],["702",["101","151","201","252","302","351","402","453","502","551","651"]],["702",["101","151","201","251","301","351","401","451","501","552","651"]],["702",["101","151","201","252","302","351","401","451","501","552","651"]],["702",["101","151","201","251","301","351","402","451","501","552","651"]],["702",["101","151","201","252","302","351","402","451","501","552","651"]],["702",["101","151","201","251","301","351","401","452","501","552","651"]],["702",["101","153","201","251","301","351","401","452","501","552","651"]],["702",["101","151","201","252","302","351","401","452","501","552","651"]],["702",["101","151","201","251","301","351","402","452","501","552","651"]],["702",["101","153","201","251","301","351","402","452","501","552","651"]],["702",["101","151","201","252","302","351","402","452","501","552","651"]],["702",["101","151","201","251","301","351","401","453","501","552","651"]],["702",["101","151","201","252","302","351","401","453","501","552","651"]],["702",["101","151","201","251","301","351","402","453","501","552","651"]],["702",["101","151","201","252","302","351","402","453","501","552","651"]],["702",["101","151","201","251","301","351","401","451","502","552","651"]],["702",["101","151","201","252","302","351","401","451","502","552","651"]],["702",["101","151","201","251","301","351","402","451","502","552","651"]],["702",["101","151","201","252","302","351","402","451","502","552","651"]],["702",["101","151","201","251","301","351","401","452","502","552","651"]],["702",["101","153","201","251","301","351","401","452","502","552","651"]],["702",["101","151","201","252","302","351","401","452","502","552","651"]],["702",["101","151","201","251","301","351","402","452","502","552","651"]],["702",["101","153","201","251","301","351","402","452","502","552","651"]],["702",["101","151","201","252","302","351","402","452","502","552","651"]],["702",["101","151","201","251","301","351","401","453","502","552","651"]],["702",["101","151","201","252","302","351","401","453","502","552","651"]],["702",["101","151","201","251","301","351","402","453","502","552","651"]],["702",["101","151","201","252","302","351","402","453","502","552","651"]],["702",["101","151","201","251","301","351","401","451","501","551","651"]],["702",["101","151","201","252","302","351","401","451","501","551","651"]],["702",["101","151","201","251","301","351","402","451","501","551","651"]],["702",["101","151","201","252","302","351","402","451","501","551","651"]],["702",["101","151","201","251","301","351","401","452","501","551","651"]],["702",["101","153","201","251","301","351","401","452","501","551","651"]],["702",["101","151","201","252","302","351","401","452","501","551","651"]],["702",["101","151","201","251","301","351","402","452","501","551","651"]],["702",["101","153","201","251","301","351","402","452","501","551","651"]],["702",["101","151","201","252","302","351","402","452","501","551","651"]],["702",["101","151","201","251","301","351","401","453","501","551","651"]],["702",["101","151","201","252","302","351","401","453","501","551","651"]],["702",["101","151","201","251","301","351","402","453","501","551","651"]],["702",["101","151","201","252","302","351","402","453","501","551","651"]],["702",["101","151","201","251","301","351","401","451","502","551","651"]],["702",["101","151","201","252","302","351","401","451","502","551","651"]],["702",["101","151","201","251","301","351","402","451","502","551","651"]],["702",["101","151","201","252","302","351","402","451","502","551","651"]],["702",["101","151","201","251","301","351","401","452","502","551","651"]],["702",["101","153","201","251","301","351","401","452","502","551","651"]],["702",["101","151","201","252","302","351","401","452","502","551","651"]],["702",["101","151","201","251","301","351","402","452","502","551","651"]],["702",["101","153","201","251","301","351","402","452","502","551","651"]],["702",["101","151","201","252","302","351","402","452","502","551","651"]],["702",["101","151","201","251","301","351","401","453","502","551","651"]],["702",["101","151","201","252","302","351","401","453","502","551","651"]],["702",["101","151","201","251","301","351","402","453","502","551","651"]],["702",["101","151","201","252","302","351","402","453","502","551","651"]],["702",["101","151","201","251","301","351","401","451","501","552","651"]],["702",["101","151","201","252","302","351","401","451","501","552","651"]],["702",["101","151","201","251","301","351","402","451","501","552","651"]],["702",["101","151","201","252","302","351","402","451","501","552","651"]],["702",["101","151","201","251","301","351","401","452","501","552","651"]],["702",["101","153","201","251","301","351","401","452","501","552","651"]],["702",["101","151","201","252","302","351","401","452","501","552","651"]],["702",["101","151","201","251","301","351","402","452","501","552","651"]],["702",["101","153","201","251","301","351","402","452","501","552","651"]],["702",["101","151","201","252","302","351","402","452","501","552","651"]],["702",["101","151","201","251","301","351","401","453","501","552","651"]],["702",["101","151","201","252","302","351","401","453","501","552","651"]],["702",["101","151","201","251","301","351","402","453","501","552","651"]],["702",["101","151","201","252","302","351","402","453","501","552","651"]],["702",["101","151","201","251","301","351","401","451","502","552","651"]],["702",["101","151","201","252","302","351","401","451","502","552","651"]],["702",["101","151","201","251","301","351","402","451","502","552","651"]],["702",["101","151","201","252","302","351","402","451","502","552","651"]],["702",["101","151","201","251","301","351","401","452","502","552","651"]],["702",["101","153","201","251","301","351","401","452","502","552","651"]],["702",["101","151","201","252","302","351","401","452","502","552","651"]],["702",["101","151","201","251","301","351","402","452","502","552","651"]],["702",["101","153","201","251","301","351","402","452","502","552","651"]],["702",["101","151","201","252","302","351","402","452","502","552","651"]],["702",["101","151","201","251","301","351","401","453","502","552","651"]],["702",["101","151","201","252","302","351","401","453","502","552","651"]],["702",["101","151","201","251","301","351","402","453","502","552","651"]],["702",["101","151","201","252","302","351","402","453","502","552","651"]]],"training":[["752",["101","151","201","251","301","351","401","451","501","551","651","702"]],["752",["101","151","201","252","302","351","401","451","501","551","651","702"]],["752",["101","151","201","251","301","351","402","451","501","551","651","702"]],["752",["101","151","201","252","302","351","402","451","501","551","651","702"]],["752",["101","151","201","251","301","351","401","452","501","551","651","702"]],["752",["101","153","201","251","301","351","401","452","501","551","651","702"]],["752",["101","151","201","252","302","351","401","452","501","551","651","702"]],["752",["101","151","201","251","301","351","402","452","501","551","651","702"]],["752",["101","153","201","251","301","351","402","452","501","551","651","702"]],["752",["101","151","201","252","302","351","402","452","501","551","651","702"]],["752",["101","151","201","251","301","351","401","453","501","551","651","702"]],["752",["101","151","201","252","302","351","401","453","501","551","651","702"]],["752",["101","151","201","251","301","351","402","453","501","551","651","702"]],["752",["101","151","201","252","302","351","402","453","501","551","651","702"]],["752",["101","151","201","251","301","351","401","451","502","551","651","702"]],["752",["101","151","201","252","302","351","401","451","502","551","651","702"]],["752",["101","151","201","251","301","351","402","451","502","551","651","702"]],["752",["101","151","201","252","302","351","402","451","502","551","651","702"]],["752",["101","151","201","251","301","351","401","452","502","551","651","702"]],["752",["101","153","201","251","301","351","401","452","502","551","651","702"]],["752",["101","151","201","252","302","351","401","452","502","551","651","702"]],["752",["101","151","201","251","301","351","402","452","502","551","651","702"]],["752",["101","153","201","251","301","351","402","452","502","551","651","702"]],["752",["101","151","201","252","302","351","402","452","502","551","651","702"]],["752",["101","151","201","251","301","351","401","453","502","551","651","702"]],["752",["101","151","201","252","302","351","401","453","502","551","651","702"]],["752",["101","151","201","251","301","351","402","453","502","551","651","702"]],["752",["101","151","201","252","302","351","402","453","502","551","651","702"]],["752",["101","151","201","251","301","351","401","451","501","552","651","702"]],["752",["101","151","201","252","302","351","401","451","501","552","651","702"]],["752",["101","151","201","251","301","351","402","451","501","552","651","702"]],["752",["101","151","201","252","302","351","402","451","501","552","651","702"]],["752",["101","151","201","251","301","351","401","452","501","552","651","702"]],["752",["101","153","201","251","301","351","401","452","501","552","651","702"]],["752",["101","151","201","252","302","351","401","452","501","552","651","702"]],["752",["101","151","201","251","301","351","402","452","501","552","651","702"]],["752",["101","153","201","251","301","351","402","452","501","552","651","702"]],["752",["101","151","201","252","302","351","402","452","501","552","651","702"]],["752",["101","151","201","251","301","351","401","453","501","552","651","702"]],["752",["101","151","201","252","302","351","401","453","501","552","651","702"]],["752",["101","151","201","251","301","351","402","453","501","552","651","702"]],["752",["101","151","201","252","302","351","402","453","501","552","651","702"]],["752",["101","151","201","251","301","351","401","451","502","552","651","702"]],["752",["101","151","201","252","302","351","401","451","502","552","651","702"]],["752",["101","151","201","251","301","351","402","451","502","552","651","702"]],["752",["101","151","201","252","302","351","402","451","502","552","651","702"]],["752",["101","151","201","251","301","351","401","452","502","552","651","702"]],["752",["101","153","201","251","301","351","401","452","502","552","651","702"]],["752",["101","151","201","252","302","351","401","452","502","552","651","702"]],["752",["101","151","201","251","301","351","402","452","502","552","651","702"]],["752",["101","153","201","251","301","351","402","452","502","552","651","702"]],["752",["101","151","201","252","302","351","402","452","502","552","651","702"]],["752",["101","151","201","251","301","351","401","453","502","552","651","702"]],["752",["101","151","201","252","302","351","401","453","502","552","651","702"]],["752",["101","151","201","251","301","351","402","453","502","552","651","702"]],["752",["101","151","201","252","302","351","402","453","502","552","651","702"]],["752",["101","151","201","251","301","351","401","451","501","551","651","702"]],["752",["101","151","201","252","302","351","401","451","501","551","651","702"]],["752",["101","151","201","251","301","351","402","451","501","551","651","702"]],["752",["101","151","201","252","302","351","402","451","501","551","651","702"]],["752",["101","151","201","251","301","351","401","452","501","551","651","702"]],["752",["101","153","201","251","301","351","401","452","501","551","651","702"]],["752",["101","151","201","252","302","351","401","452","501","551","651","702"]],["752",["101","151","201","251","301","351","402","452","501","551","651","702"]],["752",["101","153","201","251","301","351","402","452","501","551","651","702"]],["752",["101","151","201","252","302","351","402","452","501","551","651","702"]],["752",["101","151","201","251","301","351","401","453","501","551","651","702"]],["752",["101","151","201","252","302","351","401","453","501","551","651","702"]],["752",["101","151","201","251","301","351","402","453","501","551","651","702"]],["752",["101","151","201","252","302","351","402","453","501","551","651","702"]],["752",["101","151","201","251","301","351","401","451","502","551","651","702"]],["752",["101","151","201","252","302","351","401","451","502","551","651","702"]],["752",["101","151","201","251","301","351","402","451","502","551","651","702"]],["752",["101","151","201","252","302","351","402","451","502","551","651","702"]],["752",["101","151","201","251","301","351","401","452","502","551","651","702"]],["752",["101","153","201","251","301","351","401","452","502","551","651","702"]],["752",["101","151","201","252","302","351","401","452","502","551","651","702"]],["752",["101","151","201","251","301","351","402","452","502","551","651","702"]],["752",["101","153","201","251","301","351","402","452","502","551","651","702"]],["752",["101","151","201","252","302","351","402","452","502","551","651","702"]],["752",["101","151","201","251","301","351","401","453","502","551","651","702"]],["752",["101","151","201","252","302","351","401","453","502","551","651","702"]],["752",["101","151","201","251","301","351","402","453","502","551","651","702"]],["752",["101","151","201","252","302","351","402","453","502","551","651","702"]],["752",["101","151","201","251","301","351","401","451","501","552","651","702"]],["752",["101","151","201","252","302","351","401","451","501","552","651","702"]],["752",["101","151","201","251","301","351","402","451","501","552","651","702"]],["752",["101","151","201","252","302","351","402","451","501","552","651","702"]],["752",["101","151","201","251","301","351","401","452","501","552","651","702"]],["752",["101","153","201","251","301","351","401","452","501","552","651","702"]],["752",["101","151","201","252","302","351","401","452","501","552","651","702"]],["752",["101","151","201","251","301","351","402","452","501","552","651","702"]],["752",["101","153","201","251","301","351","402","452","501","552","651","702"]],["752",["101","151","201","252","302","351","402","452","501","552","651","702"]],["752",["101","151","201","251","301","351","401","453","501","552","651","702"]],["752",["101","151","201","252","302","351","401","453","501","552","651","702"]],["752",["101","151","201","251","301","351","402","453","501","552","651","702"]],["752",["101","151","201","252","302","351","402","453","501","552","651","702"]],["752",["101","151","201","251","301","351","401","451","502","552","651","702"]],["752",["101","151","201","252","302","351","401","451","502","552","651","702"]],["752",["101","151","201","251","301","351","402","451","502","552","651","702"]],["752",["101","151","201","252","302","351","402","451","502","552","651","702"]],["752",["101","151","201","251","301","351","401","452","502","552","651","702"]],["752",["101","153","201","251","301","351","401","452","502","552","651","702"]],["752",["101","151","201","252","302","351","401","452","502","552","651","702"]],["752",["101","151","201","251","301","351","402","452","502","552","651","702"]],["752",["101","153","201","251","301","351","402","452","502","552","651","702"]],["752",["101","151","201","252","302","351","402","452","502","552","651","702"]],["752",["101","151","201","251","301","351","401","453","502","552","651","702"]],["752",["101","151","201","252","302","351","401","453","502","552","651","702"]],["752",["101","151","201","251","301","351","402","453","502","552","651","702"]],["752",["101","151","201","252","302","351","402","453","502","552","651","702"]],["752",["101","151","201","251","301","351","401","451","501","551","651","702"]],["752",["101","151","201","252","302","351","401","451","501","551","651","702"]],["752",["101","151","201","251","301","351","402","451","501","551","651","702"]],["752",["101","151","201","252","302","351","402","451","501","551","651","702"]],["752",["101","151","201","251","301","351","401","452","501","551","651","702"]],["752",["101","153","201","251","301","351","401","452","501","551","651","702"]],["752",["101","151","201","252","302","351","401","452","501","551","651","702"]],["752",["101","151","201","251","301","351","402","452","501","551","651","702"]],["752",["101","153","201","251","301","351","402","452","501","551","651","702"]],["752",["101","151","201","252","302","351","402","452","501","551","651","702"]],["752",["101","151","201","251","301","351","401","453","501","551","651","702"]],["752",["101","151","201","252","302","351","401","453","501","551","651","702"]],["752",["101","151","201","251","301","351","402","453","501","551","651","702"]],["752",["101","151","201","252","302","351","402","453","501","551","651","702"]],["752",["101","151","201","251","301","351","401","451","502","551","651","702"]],["752",["101","151","201","252","302","351","401","451","502","551","651","702"]],["752",["101","151","201","251","301","351","402","451","502","551","651","702"]],["752",["101","151","201","252","302","351","402","451","502","551","651","702"]],["752",["101","151","201","251","301","351","401","452","502","551","651","702"]],["752",["101","153","201","251","301","351","401","452","502","551","651","702"]],["752",["101","151","201","252","302","351","401","452","502","551","651","702"]],["752",["101","151","201","251","301","351","402","452","502","551","651","702"]],["752",["101","153","201","251","301","351","402","452","502","551","651","702"]],["752",["101","151","201","252","302","351","402","452","502","551","651","702"]],["752",["101","151","201","251","301","351","401","453","502","551","651","702"]],["752",["101","151","201","252","302","351","401","453","502","551","651","702"]],["752",["101","151","201","251","301","351","402","453","502","551","651","702"]],["752",["101","151","201","252","302","351","402","453","502","551","651","702"]],["752",["101","151","201","251","301","351","401","451","501","552","651","702"]],["752",["101","151","201","252","302","351","401","451","501","552","651","702"]],["752",["101","151","201","251","301","351","402","451","501","552","651","702"]],["752",["101","151","201","252","302","351","402","451","501","552","651","702"]],["752",["101","151","201","251","301","351","401","452","501","552","651","702"]],["752",["101","153","201","251","301","351","401","452","501","552","651","702"]],["752",["101","151","201","252","302","351","401","452","501","552","651","702"]],["752",["101","151","201","251","301","351","402","452","501","552","651","702"]],["752",["101","153","201","251","301","351","402","452","501","552","651","702"]],["752",["101","151","201","252","302","351","402","452","501","552","651","702"]],["752",["101","151","201","251","301","351","401","453","501","552","651","702"]],["752",["101","151","201","252","302","351","401","453","501","552","651","702"]],["752",["101","151","201","251","301","351","402","453","501","552","651","702"]],["752",["101","151","201","252","302","351","402","453","501","552","651","702"]],["752",["101","151","201","251","301","351","401","451","502","552","651","702"]],["752",["101","151","201","252","302","351","401","451","502","552","651","702"]],["752",["101","151","201","251","301","351","402","451","502","552","651","702"]],["752",["101","151","201","252","302","351","402","451","502","552","651","702"]],["752",["101","151","201","251","301","351","401","452","502","552","651","702"]],["752",["101","153","201","251","301","351","401","452","502","552","651","702"]],["752",["101","151","201","252","302","351","401","452","502","552","651","702"]],["752",["101","151","201","251","301","351","402","452","502","552","651","702"]],["752",["101","153","201","251","301","351","402","452","502","552","651","702"]],["752",["101","151","201","252","302","351","402","452","502","552","651","702"]],["752",["101","151","201","251","301","351","401","453","502","552","651","702"]],["752",["101","151","201","252","302","351","401","453","502","552","651","702"]],["752",["101","151","201","251","301","351","402","453","502","552","651","702"]],["752",["101","151","201","252","302","351","402","453","502","552","651","702"]]]},"images":{"process":{"101":["101-mig/10101.jpg","101-mig/10102.jpg","101-mig/10103.jpg","101-mig/10104.jpg","101-mig/10106.jpg","101-mig/10107.jpg","101-mig/10108.jpg"],"102":["102-tig/10201.jpg","102-tig/10202.jpeg","102-tig/10203.jpg","102-tig/10204.jpeg","102-tig/10205.jpg","102-tig/10206.jpg","102-tig/10207.jpg","102-tig/10208.jpg","102-tig/10209.jpg","102-tig/10210.jpg"]},"material":{"151":["151-mild-steel/15101.jpg","151-mild-steel/15102.jpg","151-mild-steel/15103.jpg","151-mild-steel/15104.jpg","151-mild-steel/15105.jpg","151-mild-steel/15106.jpg","151-mild-steel/15107.jpg"],"152":["152-stainless-steel/15201.jpg","152-stainless-steel/15202.jpg","152-stainless-steel/15203.jpg"],"153":["153-aluminium/15301.jpg","153-aluminium/15302.jpg","153-aluminium/15303.jpg","153-aluminium/15304.jpg","153-aluminium/15305.jpg","153-aluminium/15306.jpg","153-aluminium/15307.jpg","153-aluminium/15309.jpg"],"154":["154-galvanised-steel/15401.jpg","154-galvanised-steel/15402.jpg","154-galvanised-steel/15403.jpg","154-galvanised-steel/15404.jpg","154-galvanised-steel/15405.jpg"],"155":["155-titanium/15501.jpg","155-titanium/15502.jpg","155-titanium/15503.jpg","155-titanium/15505.jpeg","155-titanium/15506.jpeg","155-titanium/15507.jpg","155-titanium/15508.jpg"]},"reach":{"201":["201-tm1400/20101.jpg","201-tm1400/20102.jpg","201-tm1400/20103.jpg","201-tm1400/20104.jpg","201-tm1400/20105.jpg","201-tm1400/20106.jpeg","201-tm1400/20107.jpg","201-tm1400/20108.jpg","201-tm1400/20109.jpg"],"202":["202-tm1800/20201.jpg","202-tm1800/20202.jpg"],"203":["203-tm2000/20301.jpg","203-tm2000/20302.jpg","203-tm2000/20303.jpg","203-tm2000/20304.jpg","203-tm2000/20305.jpg","203-tm2000/20306.jpg","203-tm2000/20307.jpg"],"204":["204-tl1800/20401.jpg","204-tl1800/20402.jpg","204-tl1800/20403.jpg","204-tl1800/20404.jpg","204-tl1800/20405.jpg"],"205":["205-tl2000/20501.jpg","205-tl2000/20502.jpg","205-tl2000/20503.jpg","205-tl2000/20504.jpg","205-tl2000/20505.jpg","205-tl2000/20506.jpg","205-tl2000/20507.jpg"]},"amperage":{"251":["251-350amp/25101.jpg","251-350amp/25102.jpg","251-350amp/25103.jpg","251-350amp/25104.jpg"],"252":["252-500amp/25201.jpg","252-500amp/25202.jpg","252-500amp/25203.jpg","252-500amp/25204.jpg"]},"cooling":{"301":["301-gas-cooled/30101.jpg","301-gas-cooled/30102.jpg","301-gas-cooled/30103.jpg","301-gas-cooled/30104.jpg","301-gas-cooled/30105.jpg","301-gas-cooled/30106.jpg","301-gas-cooled/30107.jpg","301-gas-cooled/30108.jpg","301-gas-cooled/30109.jpg","301-gas-cooled/30110.jpg","301-gas-cooled/30111.jpg"],"302":["302-water-cooled/30201.jpg","302-water-cooled/30202.jpg","302-water-cooled/30205.jpg","302-water-cooled/30208.jpg"]},"conduit":{"351":["351-separate/35101.jpg","351-separate/35102.jpg","351-separate/35103.jpg","351-separate/35104.jpg","351-separate/35105.jpg","351-separate/35106.jpg","351-separate/35107.jpg","351-separate/35108.jpg","351-separate/35109.jpg","351-separate/35111.jpg"],"352":["352-through-arm/35201.jpg","352-through-arm/35202.jpg","352-through-arm/35203.jpg","352-through-arm/35204.jpg","352-through-arm/35205.jpg","352-through-arm/35206.jpg"],"353":["353-external/35301.jpg","353-external/35302.jpeg","353-external/35304.jpg","353-external/35305.jpeg","353-external/35306.jpg","353-external/35307.jpg"]},"fume":{"401":["401-fume-extraction/40101.jpg","401-fume-extraction/40102.jpg","401-fume-extraction/40103.jpg"]},"wire":{"451":["451-wire-reel/45101.jpg","451-wire-reel/45102.jpg","451-wire-reel/45103.jpg","451-wire-reel/45104.jpg","451-wire-reel/45105.jpg"],"452":["452-wire-reel-cover/45201.jpg","452-wire-reel-cover/45202.jpg","452-wire-reel-cover/45203.jpg"],"453":["453-drum-pack/45301.jpg","453-drum-pack/45302.jpg"]},"touch":{"_generic":["_generic/touch_sense.jpg"]},"tables":{"551":["551-1x-table/55101.jpg","551-1x-table/55102.jpg","551-1x-table/55103.jpg"],"552":["552-2x-tables/55201.jpg","552-2x-tables/55202.jpg"]},"guarding":{"651":["651-full-1t-panel-on-frame/65101.jpg","651-full-1t-panel-on-frame/65102.jpg","651-full-1t-panel-on-frame/65103.jpg","651-full-1t-panel-on-frame/65104.jpg"],"652":["652-full-1t-two-walls/65201.jpg"],"653":["653-full-2t-panel-on-frame/65301.jpg","653-full-2t-panel-on-frame/65302.jpg","653-full-2t-panel-on-frame/65303.jpg"],"654":["654-full-2t-two-walls/65401.jpg"],"655":["655-curtain-1t/65501.jpg"],"656":["656-curtain-2t/65601.jpg"]},"install":{},"training":{}},"help":{"process":"MIG (gas metal arc) is fastest for production volume. TIG produces precise, low-distortion welds - ideal for stainless, aluminium and titanium where appearance and integrity are critical.","material":"Different materials need different power source characteristics, wire types and shielding gas. Selecting the right material here ensures the rest of the configuration is optimised for your work.","reach":"Robot arm reach determines the maximum work envelope. Larger reach handles bigger parts but takes more floor space. The TM series is hollow wrist; the TL series offers extended reach for long parts.","amperage":"350 amp suits most general fabrication up to ~12 mm steel. Choose 500 amp if you regularly weld heavier sections, run high-deposition single-pass welds, or use larger wire diameters.","cooling":"Gas cooled torches are simpler and lower-maintenance, suited to lighter duty cycles. Water cooled torches handle continuous high amperage without overheating - essential for production environments running 60 %+ duty cycle.","conduit":"Separate routing is the lowest-cost standard option. Through-arm routing keeps cables clear of the weld zone and reduces snag risk. External routing is required for some specific robot/torch combinations.","fume":"Integrated fume extraction draws weld fume directly at the torch nozzle, dramatically improving operator safety and reducing facility ventilation load. Specify \"no extraction\" only if you have a strong external capture system.","wire":"Standard wire reels (15 kg) are the lowest-cost option but require more frequent changeover. Covered reels protect the wire from contamination. Marathon drum packs (200–300 kg) maximise uptime in high-volume production.","touch":"Touch sensing lets the robot probe the workpiece to find the actual joint location, compensating for jig and part-to-part variation. Recommended whenever your part tolerances exceed ±1 mm.","tables":"A single table is the most compact option. Two tables enable a load/unload cycle where the operator prepares the next part while the robot welds - significantly increasing arc-on time.","guarding":"Full panel guarding with a sliding door provides the highest containment for spatter and arc flash. 2-post light curtain configurations save space and cost but require strict procedural control.","install":"Orion Automation installation includes mechanical setup, electrical commissioning, calibration and first-weld validation. Customer-led installation is supported with full documentation and remote technical assistance.","training":"On-site training at our Melbourne facility uses dedicated training cells with no production pressure. On-site training at your factory uses your actual cell, jigs and parts - typically required after major changes."},"blurbs":{"101":"Gas metal arc welding - fast, versatile, suited to high-volume production","102":"Precision tungsten inert gas welding - superior appearance and metallurgical control","151":"","152":"","153":"","154":"","155":"","156":"Hard-facing alloy and wear deposit welding - high-hardness overlays for abrasion and impact resistance","201":"1437 mm reach · 6 kg payload · compact for small/medium parts","202":"1801 mm reach · 8 kg payload · extended general-purpose","203":"2004 mm reach · 6 kg payload · extended reach with mid payload","204":"1801 mm reach · 8 kg payload · long-arm configuration for tall parts","205":"2004 mm reach · 8 kg payload · maximum reach industrial manipulator","251":"Suits up to ~12 mm carbon steel · ideal for general fabrication","252":"Heavy section welding · high-deposition production · larger wire diameters","301":"Lower maintenance · suits up to 60 % duty cycle","302":"High duty cycle production · sustained continuous welding","351":"Standard low-cost routing · easy field service","352":"Cables protected inside the arm · reduced snag risk","353":"Required for specific TL-series water-cooled configurations","401":"Integrated extraction torch and filter unit · superior operator safety","402":"Standard torch · for facilities with strong general ventilation","451":"Standard 15 kg wire reel on enclosed reel stand","452":"Covered reel - wire protected from dust and contamination","453":"Marathon drum pack (200–300 kg) - maximum production uptime","501":"Probe-on-contact joint finding - compensates for part variation","502":"Standard programmed paths - best for tightly-jigged repeatable parts","551":"Single table frame · most compact footprint","552":"Twin tables · operator load/unload while robot welds","651":"Full enclosure with light curtain · single table · panel mounted on frame","652":"Full enclosure with light curtain · single table · two parallel walls","653":"Full enclosure with light curtain · twin tables · panel mounted on frame","654":"Full enclosure with light curtain · twin tables · two parallel walls","655":"2-post light curtain only · single table · minimum footprint","656":"2-post light curtain only · twin tables · minimum footprint","701":"Customer-led with full documentation and remote support","702":"Turnkey by Orion - mechanical, electrical, commissioning, validation","751":"Comprehensive training at Orion Melbourne facility","752":"Training at your factory using your actual cell and parts","753":"No training needed - experienced operators on existing system"}}; /* @@DATA_END@@ */
+
+// ----------------------------------------------------------------
+// Image URL helper
+// ----------------------------------------------------------------
+function imageUrl(qkey, filename) {
+  const q = DATA.questions.find(x => x.key === qkey);
+  if (!q || !q.folder) return '';
+  const base = IMAGE_BASE ? IMAGE_BASE.replace(/\/$/, '') : './images';
+  return `${base}/${q.folder}/${filename.toLowerCase()}`;
+}
+
+function getImagesForOption(qkey, optionCode) {
+  const byCode = DATA.images[qkey] || {};
+  // Touch sensing has a generic image instead of per-option
+  if (qkey === 'touch' && byCode._generic) {
+    return byCode._generic;
+  }
+  return byCode[optionCode] || [];
+}
+
+// ----------------------------------------------------------------
+// Compact config code encoding
+// Each question maps to a single mnemonic character.
+// Grouped with hyphens: Robot&Process - Power&Torch - Consumables - Workholding - Deployment
+// ----------------------------------------------------------------
+const CODE_MAP = {
+  process:  { '101': 'M', '102': 'T' },
+  material: { '151': 'C', '152': 'S', '153': 'A', '154': 'G', '155': 'T', '156': 'H' },
+  reach:    { '201': '1', '202': '2', '203': '3', '204': '4', '205': '5' },
+  amperage: { '251': '3', '252': '5' },
+  cooling:  { '301': 'G', '302': 'W' },
+  conduit:  { '351': 'S', '352': 'T', '353': 'E' },
+  fume:     { '401': 'F', '402': 'N' },
+  wire:     { '451': 'R', '452': 'C', '453': 'D' },
+  touch:    { '501': 'Y', '502': 'N' },
+  tables:   { '551': '1', '552': '2' },
+  guarding: { '651': '1', '652': '2', '653': '3', '654': '4', '655': '5', '656': '6' },
+  // install and training disabled - data preserved in options/blurbs/help json
+};
+
+// Groups for segmented code display and spec sheet sections
+const SPEC_GROUPS = [
+  { title: 'Robot & Process',        keys: ['process', 'material', 'reach'] },
+  { title: 'Power & Torch',          keys: ['amperage', 'cooling'] },
+  { title: 'Consumables & Features', keys: ['fume', 'wire', 'touch'] },
+  { title: 'Workholding',            keys: ['tables'] },
+  { title: 'Deployment',             keys: ['guarding'] },
+];
+
+function buildCompactCode(selections) {
+  return SPEC_GROUPS.map(g =>
+    g.keys.map(k => {
+      const sel = selections[k];
+      return sel && CODE_MAP[k][sel] ? CODE_MAP[k][sel] : '?';
+    }).join('')
+  ).join('-');
+}
+
+// ----------------------------------------------------------------
+// Validity engine
+// A rule = [thisCode, prereqsArray] where prereqs may contain null wildcards
+// An option O is valid for selections S if at least one of O's rules
+// matches: for every position i where rule[i] !== null, S[i] === rule[i].
+// If NO option matches, fall back to showing all options (avoid dead ends).
+// ----------------------------------------------------------------
+function getValidOptions(qkey, selections) {
+  const order = DATA.order[qkey] || Object.keys(DATA.options[qkey] || {});
+  const allOptions = Object.keys(DATA.options[qkey] || {});
+  const rules = DATA.rules[qkey] || [];
+
+  // If the rule set doesn't enumerate every option, the rules are illustrative
+  // (the spreadsheet author didn't fill in every leaf for install/training/guarding).
+  // In that case, show all options - the rules can't reliably gate.
+  const codesInRules = new Set(rules.map(r => r[0]));
+  const ruleSetIsComplete = allOptions.every(c => codesInRules.has(c));
+  if (!ruleSetIsComplete) {
+    return order.slice();
+  }
+
+  // selections is { process: '101', material: '151', ... } - convert to ordered array
+  const selOrder = ['process','material','reach','amperage','cooling','fume','wire','touch','tables','guarding'];
+  const qIdx = selOrder.indexOf(qkey);
+  const prior = selOrder.slice(0, qIdx).map(k => selections[k] || null);
+
+  const valid = new Set();
+  for (const rule of rules) {
+    const [thisCode, prereqs] = rule;
+    let ok = true;
+    for (let i = 0; i < prereqs.length; i++) {
+      if (prereqs[i] !== null && prior[i] !== null && prior[i] !== prereqs[i]) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) valid.add(thisCode);
+  }
+
+  // If nothing matches (sparse rules don't cover this path), allow everything
+  if (valid.size === 0) {
+    return order.slice();
+  }
+  // Return ordered list of valid options that exist in our options table
+  return order.filter(c => valid.has(c) && DATA.options[qkey][c]);
+}
+
+// ----------------------------------------------------------------
+// State
+// ----------------------------------------------------------------
+const state = {
+  step: -1,         // -1 = welcome, 0..13 = questions, 14 = summary
+  selections: {},   // { process: '101', material: '151', ... }
+  infoOpen: false,
+};
+
+const QUESTION_KEYS = DATA.questions.map(q => q.key);
+
+// Session persistence - survive refresh / accidental tab close
+function saveSession() {
+  try { sessionStorage.setItem('bsc', JSON.stringify({ step: state.step, selections: state.selections })); } catch(e) {}
+}
+function loadSession() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem('bsc'));
+    if (s && s.selections && Object.keys(s.selections).length) {
+      // Drop any selections for steps that no longer exist
+      const validKeys = new Set(QUESTION_KEYS);
+      for (const k of Object.keys(s.selections)) {
+        if (!validKeys.has(k)) delete s.selections[k];
+      }
+      // Clamp step to valid range
+      state.step = Math.min(s.step, QUESTION_KEYS.length);
+      state.selections = s.selections;
+    }
+  } catch(e) {}
+}
+// Reverse CODE_MAP for decoding shared links
+const CODE_MAP_REVERSE = {};
+for (const [qkey, map] of Object.entries(CODE_MAP)) {
+  CODE_MAP_REVERSE[qkey] = {};
+  for (const [optCode, ch] of Object.entries(map)) {
+    CODE_MAP_REVERSE[qkey][ch] = optCode;
+  }
+}
+
+function loadFromHash() {
+  const hash = location.hash.slice(1);
+  if (!hash || !/^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{1,2}-[A-Z0-9]{3}$/i.test(hash)) return false;
+  const groups = hash.toUpperCase().split('-');
+  const chars = groups.join('');
+  if (chars.length !== QUESTION_KEYS.length) return false;
+  const selections = {};
+  for (let i = 0; i < QUESTION_KEYS.length; i++) {
+    const qkey = QUESTION_KEYS[i];
+    const ch = chars[i];
+    const optCode = (CODE_MAP_REVERSE[qkey] || {})[ch];
+    if (!optCode) return false;
+    selections[qkey] = optCode;
+  }
+  state.selections = selections;
+  state.step = QUESTION_KEYS.length; // go straight to summary
+  return true;
+}
+
+// Load state: URL hash takes priority, then sessionStorage
+if (!loadFromHash()) {
+  loadSession();
+}
+
+// ----------------------------------------------------------------
+// Render
+// ----------------------------------------------------------------
+const $ = id => document.getElementById(id);
+
+let prevStep = -1;
+function render() {
+  saveSession();
+  if (heroTimer) { clearInterval(heroTimer); heroTimer = null; }
+  if (state.step < QUESTION_KEYS.length && location.hash) history.replaceState(null, '', location.pathname);
+  const app = document.getElementById('app');
+  const direction = state.step > prevStep ? 'forward' : 'back';
+  prevStep = state.step;
+  if (state.step === -1) {
+    app.classList.add('welcome-mode');
+    document.body.classList.remove('config-mode');
+    document.documentElement.classList.remove('config-mode');
+    document.body.classList.add('welcome-mode');
+    document.documentElement.classList.add('welcome-mode');
+    app.innerHTML = renderWelcome();
+    bindWelcome();
+    requestAnimationFrame(onAfterRender);
+    return;
+  }
+  app.classList.remove('welcome-mode');
+  document.body.classList.remove('welcome-mode');
+  document.documentElement.classList.remove('welcome-mode');
+  document.body.classList.add('config-mode');
+  document.documentElement.classList.add('config-mode');
+  if (state.step >= QUESTION_KEYS.length) {
+    app.innerHTML = renderHeader() + renderSummary();
+    bindCommon();
+    bindSummary();
+    requestAnimationFrame(onAfterRender);
+    return;
+  }
+  const slideClass = direction === 'back' ? 'slide-back' : '';
+  app.innerHTML =
+    renderHeader() +
+    renderTitleBlock() +
+    renderProgress() +
+    `<div class="step-content ${slideClass}">` +
+    renderQuestion(state.step) +
+    renderNav() +
+    `</div>`;
+  bindCommon();
+  bindQuestion();
+  bindSlideshow();
+  requestAnimationFrame(onAfterRender);
+}
+
+function renderWelcome() {
+  const heroBase = IMAGE_BASE ? IMAGE_BASE.replace(/\/$/, '') : './images';
+  const heroDir = `${heroBase}/hero`;
+  return `
+    ${SHOW_HEADER ? `
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="./images/logo.png" alt="Orion Automation">
+        <div class="brand-divider"></div>
+        <div class="brand-tag">Welding Cell Configurator</div>
+      </div>
+    </div>` : ''}
+    <div class="welcome">
+      <div class="welcome-text">
+        <h1>Configure your robotic welding cell</h1>
+        <p>Walk through 10 design decisions and we'll generate a complete specification for your Panasonic dedicated robot welding system, especially designed for welding. Built around our Australian made, internally designed fabricated platform - proven, fast to deploy, simple to relocate in future, and engineered for Australian and New Zealand fabricators.</p>
+        <div class="stats">
+          <div class="stat"><div class="num">10</div><div class="lbl">Steps</div></div>
+          <div class="stat"><div class="num">~4</div><div class="lbl">Minutes</div></div>
+        </div>
+        <button class="btn btn-primary" id="start-btn">
+          Start configuring →
+        </button>
+      </div>
+      <div class="welcome-hero" id="welcome-hero">
+        <img src="${heroDir}/01.jpg" class="active" alt="">
+        <img src="${heroDir}/02.jpg" alt="">
+        <img src="${heroDir}/03.jpg" alt="">
+        <img src="${heroDir}/04.jpg" alt="">
+      </div>
+    </div>
+  `;
+}
+
+function renderHeader() {
+  if (!SHOW_HEADER) return '';
+  return `
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="./images/logo.png" alt="Orion Automation">
+        <div class="brand-divider"></div>
+        <div class="brand-tag">Welding Cell Configurator</div>
+      </div>
+      <button class="restart-btn" id="restart-btn">↻ Start over</button>
+    </div>
+  `;
+}
+
+function renderTitleBlock() {
+  if (state.step !== 0) return '';
+  return `
+    <div class="title-block">
+      <div class="eyebrow">Robotic welding cell · welding cell</div>
+      <h1>Configure your specification</h1>
+      <p>Each step adapts to your earlier choices. You can jump back to any completed step to revise.</p>
+    </div>
+  `;
+}
+
+function renderProgress() {
+  const total = QUESTION_KEYS.length;
+  const completed = Object.keys(state.selections).length;
+  const pct = Math.round((completed / total) * 100);
+  let pills = '';
+  for (let i = 0; i < total; i++) {
+    const q = DATA.questions[i];
+    const isComplete = state.selections[q.key];
+    const isActive = state.step === i;
+    const isReachable = i <= completed;  // can jump to any completed step or the next one
+    const cls = (isActive ? 'active' : '') + ' ' + (isComplete && !isActive ? 'complete' : '');
+    pills += `
+      <button class="step-pill ${cls}" data-step="${i}" ${!isReachable ? 'disabled' : ''}>
+        <span class="step-num">${i+1}</span>
+        <span class="step-label">${q.short}</span>
+      </button>
+    `;
+  }
+  return `
+    <div class="progress" data-progress="Step ${state.step+1} of ${total} · ${pct}% complete">
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width: ${pct}%"></div></div>
+      <div class="step-strip">${pills}</div>
+    </div>
+  `;
+}
+
+function explainDisabled(qkey, optionCode, selections) {
+  // Find which prior selection is incompatible with this option's rules.
+  const rules = (DATA.rules[qkey] || []).filter(r => r[0] === optionCode);
+  if (rules.length === 0) return '';
+  const selOrder = ['process','material','reach','amperage','cooling','fume','wire','touch','tables','guarding'];
+  const prior = selOrder.map(k => selections[k] || null);
+  // For each rule, find the first prior selection that conflicts
+  // and report which question it relates to.
+  const conflicts = new Set();
+  for (const [, prereqs] of rules) {
+    for (let i = 0; i < prereqs.length; i++) {
+      if (prereqs[i] !== null && prior[i] !== null && prior[i] !== prereqs[i]) {
+        conflicts.add(selOrder[i]);
+        break;
+      }
+    }
+  }
+  if (conflicts.size === 0) return '';
+  const titleByKey = {};
+  for (const q of DATA.questions) titleByKey[q.key] = q.short;
+  const names = [...conflicts].map(k => titleByKey[k] || k);
+  return 'Not available with your ' + names.join(' / ') + ' selection';
+}
+
+function renderQuestion(stepIdx) {
+  const q = DATA.questions[stepIdx];
+  const validCodes = getValidOptions(q.key, state.selections);
+  const allCodes = DATA.order[q.key] || Object.keys(DATA.options[q.key] || {});
+  const selected = state.selections[q.key];
+
+  let cards = '';
+  for (const code of allCodes) {
+    const label = DATA.options[q.key][code];
+    if (!label) continue;
+    const isValid = validCodes.includes(code);
+    const isSelected = selected === code;
+    const blurb = DATA.blurbs[code] || '';
+    const imgs = getImagesForOption(q.key, code);
+    let imgHtml = '';
+    let photoBtn = '';
+    if (imgs.length > 0) {
+      imgHtml = `<img src="${imageUrl(q.key, imgs[0])}"
+        data-src="${imageUrl(q.key, imgs[0])}"
+        alt="${label}" class="active"
+        onerror="window.handleImgError(this, '${q.icon}')">`;
+      for (let ii = 1; ii < imgs.length; ii++) {
+        imgHtml += `<img data-src="${imageUrl(q.key, imgs[ii])}"
+          alt="${label}" class="">`;
+      }
+      if (imgs.length > 1) {
+        photoBtn = `<div class="option-photos-btn" data-lb-qkey="${q.key}" data-lb-code="${code}">&#128247; See all ${imgs.length} photos</div>`;
+      }
+    } else {
+      imgHtml = `<div class="option-image-placeholder">${q.icon}</div>`;
+    }
+
+    let unavailableBadge = '';
+    if (!isValid) {
+      const reason = explainDisabled(q.key, code, state.selections);
+      unavailableBadge = `<div class="option-unavailable" title="${reason}">Not available</div>`;
+    }
+
+    cards += `
+      <button class="option ${isSelected ? 'selected' : ''} ${!isValid ? 'disabled' : ''}"
+              data-code="${code}" ${!isValid ? 'disabled' : ''}
+              ${!isValid ? `title="${explainDisabled(q.key, code, state.selections)}"` : ''}
+              style="position: relative;">
+        <div class="option-check">✓</div>
+        ${unavailableBadge}
+        <div class="option-image">${imgHtml}</div>
+        ${photoBtn}
+        <div class="option-body">
+          <div class="option-title">${label}</div>
+          <p class="option-blurb">${blurb}</p>
+        </div>
+      </button>
+    `;
+  }
+
+  const helpText = DATA.help[q.key] || '';
+  const canBack = stepIdx > 0;
+  const canNext = state.selections[q.key];
+  const isLastQuestion = stepIdx === QUESTION_KEYS.length - 1;
+
+  return `
+    <div class="q-header">
+      <div class="q-meta">
+        <div class="q-counter">Step <span class="q-counter-num">${stepIdx+1}</span> of ${QUESTION_KEYS.length} · ${q.short}</div>
+        <h2 class="q-title">${q.title}</h2>
+        <p class="q-subtitle">${q.subtitle}</p>
+      </div>
+      <div class="q-actions">
+        <button class="info-toggle ${state.infoOpen ? 'open' : ''}" id="info-toggle">
+          <span>${state.infoOpen ? '×' : 'i'}</span>
+          ${state.infoOpen ? 'Hide info' : 'More info'}
+        </button>
+        <div class="q-actions-sep"></div>
+        <button class="btn btn-secondary" id="back-btn" ${canBack ? '' : 'disabled'}>← Back</button>
+        <button class="btn btn-primary" id="next-btn" ${canNext ? '' : 'disabled'}>
+          ${isLastQuestion ? 'Review →' : 'Continue →'}
+        </button>
+      </div>
+    </div>
+    <div class="info-panel ${state.infoOpen ? 'open' : ''}">${helpText}</div>
+    <div class="options">${cards}</div>
+  `;
+}
+
+function renderNav() {
+  const completed = Object.keys(state.selections).length;
+  return `
+    <div class="nav">
+      <div class="nav-summary">
+        <strong>${completed}</strong> of ${QUESTION_KEYS.length} selections made
+      </div>
+      ${!SHOW_HEADER ? `<button class="restart-btn" id="restart-btn">↻ Start over</button>` : ''}
+    </div>
+  `;
+}
+
+function renderSummary() {
+  const codeString = buildCompactCode(state.selections);
+
+  // Build the mailto URL now, at render time, so the anchor <a href> works as a
+  // plain native link — no JS click handler needed. This is the only approach
+  // that works reliably inside a cross-origin iframe (window.open is blocked).
+  const _emailLines = DATA.questions.map(q => {
+    const c = state.selections[q.key];
+    const lbl = c ? DATA.options[q.key][c] : '-';
+    return `  ${q.short.padEnd(12)} ${c || '---'}  ${lbl}`;
+  }).join('%0D%0A');
+  const _emailSubject = encodeURIComponent('Request for system quote: ' + codeString);
+  const _emailBody = encodeURIComponent(
+    'Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + codeString + '\n\n'
+  ).replace(/%0A/g, '%0D%0A') + _emailLines + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
+  const _mailtoHref = `mailto:jeff@orionautomation.com.au?subject=${_emailSubject}&body=${_emailBody}`;
+
+  // Large hero from process selection
+  const processCode = state.selections['process'];
+  const processImgs = processCode ? getImagesForOption('process', processCode) : [];
+  const heroImgHtml = processImgs.length
+    ? `<div class="summary-hero"><img src="${imageUrl('process', processImgs[0])}" alt="Welding process"></div>`
+    : '';
+
+  let specHtml = '';
+  for (const group of SPEC_GROUPS) {
+    let rows = '';
+    for (const k of group.keys) {
+      const q = DATA.questions.find(x => x.key === k);
+      const code = state.selections[k];
+      const label = code ? DATA.options[k][code] : '-';
+      rows += `<div class="spec-row"><span class="spec-label">${q.short}</span><span class="spec-value">${label}</span></div>`;
+    }
+    specHtml += `<div class="spec-group"><h4 class="spec-group-title">${group.title}</h4>${rows}</div>`;
+  }
+
+  // Set URL hash for shareable link
+  history.replaceState(null, '', '#' + codeString);
+
+  return `
+    <div class="summary-page-header">
+      <div class="title-block" style="margin-bottom:0;flex:1;">
+        <div class="eyebrow">Configuration complete</div>
+        <h1>Your welding cell specification</h1>
+        <p>Share this with our team to receive a detailed system proposal & pricing.</p>
+      </div>
+      <div class="summary-actions">
+        <a class="btn btn-primary" href="${_mailtoHref}">Email for quote</a>
+        <button class="btn btn-secondary" id="back-to-config">← Edit answers</button>
+        <button class="btn btn-secondary" id="print-spec">Print</button>
+        <button class="restart-btn" id="restart-btn">↻ Start over</button>
+      </div>
+    </div>
+    <div class="summary-layout">
+      <div class="summary">
+        <div class="code-bar">
+          <span class="code-bar-label">Configuration code for your system:</span>
+          <span class="code-bar-value" id="config-code">${codeString}</span>
+          <button class="btn btn-primary" id="copy-code">Copy</button>
+        </div>
+        <div class="spec-sheet">${specHtml}</div>
+        <div class="training-note">
+          <span class="training-note-icon">★</span>
+          <span><strong>On-site training is included</strong> for all new customers - Orion will commission your cell at your facility and train your operators on-site, on your fabrications.</span>
+        </div>
+      </div>
+      ${heroImgHtml}
+    </div>
+  `;
+}
+
+// ----------------------------------------------------------------
+// Bind / event handlers
+// ----------------------------------------------------------------
+let heroTimer = null;
+function bindWelcome() {
+  $('start-btn').addEventListener('click', () => {
+    const welcome = document.querySelector('.welcome');
+    if (welcome) {
+      welcome.classList.add('exit');
+      welcome.addEventListener('animationend', () => {
+        state.step = 0;
+        render();
+      }, { once: true });
+    } else {
+      state.step = 0;
+      render();
+    }
+  });
+  // Auto-hide header on scroll
+  const hdr = document.querySelector('.header');
+  function onWelcomeScroll() {
+    if (!document.querySelector('.welcome-mode')) {
+      window.removeEventListener('scroll', onWelcomeScroll);
+      return;
+    }
+    hdr.classList.toggle('scrolled-away', window.scrollY > 60);
+  }
+  window.addEventListener('scroll', onWelcomeScroll, { passive: true });
+  // Hero slideshow
+  const hero = $('welcome-hero');
+  if (hero) {
+    const imgs = hero.querySelectorAll('img');
+    if (imgs.length > 1) {
+      let idx = 0;
+      heroTimer = setInterval(() => {
+        imgs[idx].classList.remove('active');
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('active');
+      }, 4000);
+    }
+  }
+}
+
+function bindCommon() {
+  const r = $('restart-btn');
+  if (r) r.addEventListener('click', resetAll);
+  const activePill = document.querySelector('.step-pill.active');
+  if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
+}
+
+function bindQuestion() {
+  // Step pill jumps
+  document.querySelectorAll('.step-pill:not(:disabled)').forEach(b => {
+    b.addEventListener('click', () => {
+      state.step = Number(b.dataset.step);
+      state.infoOpen = false;
+      render();
+    });
+  });
+  // Option clicks - select and auto-advance after brief visual confirmation
+  document.querySelectorAll('.option:not([disabled])').forEach(b => {
+    b.addEventListener('click', () => {
+      const qkey = QUESTION_KEYS[state.step];
+      const code = b.dataset.code;
+      state.selections[qkey] = code;
+      cascadeInvalidate();
+      // Show selection visually
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      b.classList.add('selected');
+      // Auto-advance after a moment
+      setTimeout(() => {
+        state.step += 1;
+        state.infoOpen = false;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 350);
+    });
+  });
+  // Info toggle
+  $('info-toggle').addEventListener('click', () => {
+    state.infoOpen = !state.infoOpen;
+    render();
+  });
+  // Nav
+  $('back-btn').addEventListener('click', () => {
+    if (state.step > 0) { state.step -= 1; state.infoOpen = false; render(); }
+  });
+  $('next-btn').addEventListener('click', () => {
+    state.step += 1;
+    state.infoOpen = false;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// Slideshow on hover - cycle images every 2s while hovering an option card
+const slideshowTimers = new Map();
+
+function bindSlideshow() {
+  // "See all photos" button opens lightbox
+  document.querySelectorAll('.option-photos-btn[data-lb-qkey]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      const qkey = btn.dataset.lbQkey;
+      const code = btn.dataset.lbCode;
+      const imgs = getImagesForOption(qkey, code);
+      if (imgs.length) openLightbox(qkey, imgs, btn);
+    });
+  });
+
+  document.querySelectorAll('.option').forEach(card => {
+    const imgContainer = card.querySelector('.option-image');
+    if (!imgContainer || imgContainer.querySelectorAll('img').length < 2) return;
+
+    card.addEventListener('mouseenter', () => {
+      const imgs = imgContainer.querySelectorAll('img');
+      if (imgs.length < 2) return;
+      // Lazy-load all images on first hover
+      imgs.forEach(img => {
+        if (img.dataset.src && !img.src) img.src = img.dataset.src;
+      });
+      let idx = 0;
+      const timer = setInterval(() => {
+        const live = imgContainer.querySelectorAll('img');
+        if (live.length < 2) { clearInterval(timer); return; }
+        live.forEach(i => i.classList.remove('active'));
+        idx = (idx + 1) % live.length;
+        live[idx].classList.add('active');
+      }, 2500);
+      slideshowTimers.set(card, timer);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      const timer = slideshowTimers.get(card);
+      if (timer) { clearInterval(timer); slideshowTimers.delete(card); }
+      const imgs = imgContainer.querySelectorAll('img');
+      imgs.forEach((img, i) => img.classList.toggle('active', i === 0));
+    });
+  });
+}
+
+function bindSummary() {
+  $('copy-code').addEventListener('click', () => {
+    const code = $('config-code').textContent;
+    navigator.clipboard.writeText(code).then(showToast);
+  });
+  $('print-spec').addEventListener('click', () => window.print());
+  $('back-to-config').addEventListener('click', () => {
+    state.step = QUESTION_KEYS.length - 1;
+    render();
+  });
+  $('restart-summary').addEventListener('click', resetAll);
+}
+
+// When a selection changes, downstream selections may no longer satisfy rules.
+// Walk forward from the changed step and clear any selection that's no longer valid.
+function cascadeInvalidate() {
+  for (let i = state.step + 1; i < QUESTION_KEYS.length; i++) {
+    const k = QUESTION_KEYS[i];
+    const sel = state.selections[k];
+    if (!sel) continue;
+    const valid = getValidOptions(k, state.selections);
+    if (!valid.includes(sel)) {
+      delete state.selections[k];
+    }
+  }
+}
+
+function resetAll() {
+  if (!Object.keys(state.selections).length) {
+    // Nothing selected yet — skip the confirmation
+    state.step = -1;
+    state.selections = {};
+    state.infoOpen = false;
+    try { sessionStorage.removeItem('bsc'); } catch(e) {}
+    render();
+  } else {
+    $('confirm-dialog').classList.add('open');
+  }
+}
+
+function closeConfirmDialog() {
+  $('confirm-dialog').classList.remove('open');
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  if (msg) t.textContent = msg;
+  else t.textContent = 'Copied to clipboard';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// When embedded in an iframe (e.g. Squarespace), post our content height
+// to the parent so it can resize the iframe and avoid an inner scrollbar.
+//
+// IMPORTANT: only ever report an *increasing* height.  Squarespace's outer
+// container sometimes caches the tallest height it has seen and does not
+// shrink when the iframe does, leaving a large white gap.  By never sending
+// a smaller value the iframe height is monotonically non-decreasing, so
+// Squarespace's cached value is always correct and there is no gap.
+let _iframeMaxH = 0;
+function postIframeHeight() {
+  if (window.parent === window) return; // not in iframe
+  try {
+    const h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    if (h > _iframeMaxH) {
+      _iframeMaxH = h;
+      window.parent.postMessage({ type: 'orion-bsc-resize', height: _iframeMaxH }, '*');
+    }
+  } catch (e) { /* parent on different origin, ignore */ }
+}
+
+// After every render, lock the app container to the largest height seen so
+// the document itself never shrinks (which would also prevent postIframeHeight
+// from ever sending a smaller value even without the _iframeMaxH guard above).
+function lockMinHeight() {
+  const app = document.getElementById('app');
+  if (!app) return;
+  const h = document.documentElement.scrollHeight;
+  const cur = parseFloat(app.style.minHeight) || 0;
+  if (h > cur) app.style.minHeight = h + 'px';
+}
+
+// Combined post-render hook called via requestAnimationFrame after every step.
+function onAfterRender() { lockMinHeight(); postIframeHeight(); }
+
+// ResizeObserver: re-fires postIframeHeight whenever content height *grows* —
+// catches option card images loading after the initial render frame, font
+// metrics settling, and any other reflow that requestAnimationFrame misses.
+if (window.parent !== window && typeof ResizeObserver !== 'undefined') {
+  let _roTimer;
+  new ResizeObserver(function () {
+    clearTimeout(_roTimer);
+    _roTimer = setTimeout(postIframeHeight, 50);
+  }).observe(document.documentElement);
+}
+// Belt-and-braces: also fire once everything (images, fonts) is fully loaded.
+window.addEventListener('load', postIframeHeight);
+
+// Lightbox
+let lbState = { qkey: '', imgs: [], idx: 0 };
+
+// Compact height used for the lightbox when running inside an iframe.
+// Can't escape the iframe to fill the real browser window, so we use a
+// fixed-height strip anchored right where the user clicked instead.
+const LB_IFRAME_HEIGHT = 480;
+
+function openLightbox(qkey, imgs, triggerEl) {
+  lbState = { qkey, imgs, idx: 0 };
+  updateLightbox();
+  const lb = $('lightbox');
+  if (window.self !== window.top) {
+    // Cross-origin iframe (Squarespace embed): can't escape to fill the real
+    // browser window. Use a compact strip anchored to where the user clicked.
+    // getBoundingClientRect() gives absolute Y in the iframe document since
+    // the iframe has no internal scroll of its own.
+    const rect   = triggerEl ? triggerEl.getBoundingClientRect() : null;
+    const btnTop = rect ? rect.top : document.documentElement.scrollHeight / 2;
+    const lbTop  = Math.max(0, btnTop - LB_IFRAME_HEIGHT / 2);
+    lb.style.position = 'absolute';
+    lb.style.left     = '0';
+    lb.style.right    = '0';
+    lb.style.top      = lbTop + 'px';
+    lb.style.bottom   = 'auto';
+    lb.style.height   = LB_IFRAME_HEIGHT + 'px';
+    lb.style.setProperty('--lb-vw', window.innerWidth + 'px');
+    lb.style.setProperty('--lb-vh', LB_IFRAME_HEIGHT + 'px');
+    lb.classList.add('open');
+  } else {
+    // Standalone (not in iframe): position:fixed fills the real browser window.
+    lb.classList.add('open');
+  }
+}
+
+function updateLightbox() {
+  $('lb-img').src = imageUrl(lbState.qkey, lbState.imgs[lbState.idx]);
+  $('lb-counter').textContent = (lbState.idx + 1) + ' / ' + lbState.imgs.length;
+  $('lb-prev').style.display = lbState.imgs.length > 1 ? '' : 'none';
+  $('lb-next').style.display = lbState.imgs.length > 1 ? '' : 'none';
+}
+
+function closeLightbox() {
+  const lb = $('lightbox');
+  lb.classList.remove('open');
+  // Reset any inline overrides applied for iframe mode.
+  lb.style.position = '';
+  lb.style.top      = '';
+  lb.style.bottom   = '';
+  lb.style.height   = '';
+  lb.style.removeProperty('--lb-vw');
+  lb.style.removeProperty('--lb-vh');
+}
+
+// Confirm dialog
+$('confirm-cancel').addEventListener('click', closeConfirmDialog);
+$('confirm-ok').addEventListener('click', function () {
+  closeConfirmDialog();
+  state.step = -1;
+  state.selections = {};
+  state.infoOpen = false;
+  try { sessionStorage.removeItem('bsc'); } catch(e) {}
+  render();
+});
+$('confirm-dialog').addEventListener('click', function (e) {
+  if (e.target === $('confirm-dialog')) closeConfirmDialog();
+});
+
+$('lb-close').addEventListener('click', closeLightbox);
+$('lb-prev').addEventListener('click', () => {
+  lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length;
+  updateLightbox();
+});
+$('lb-next').addEventListener('click', () => {
+  lbState.idx = (lbState.idx + 1) % lbState.imgs.length;
+  updateLightbox();
+});
+$('lightbox').addEventListener('click', e => {
+  if (e.target === $('lightbox')) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if ($('confirm-dialog').classList.contains('open')) { closeConfirmDialog(); return; }
+    if ($('lightbox').classList.contains('open')) { closeLightbox(); return; }
+  }
+  if (!$('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft') { lbState.idx = (lbState.idx - 1 + lbState.imgs.length) % lbState.imgs.length; updateLightbox(); }
+  if (e.key === 'ArrowRight') { lbState.idx = (lbState.idx + 1) % lbState.imgs.length; updateLightbox(); }
+});
+
+// Init
+render();
+</script>
+
+</body>
+</html>
