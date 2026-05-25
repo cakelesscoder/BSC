@@ -23,7 +23,7 @@ jobs:
 
       - name: Build index.html
         run: |
-          python3 build.py --image-base https://cakelesscoder.github.io/Base-System-Configurator/images
+          python3 build.py --image-base https://cakelesscoder.github.io/BSC/images
 
       - name: Assemble deploy directory
         run: |
