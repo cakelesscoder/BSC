@@ -1603,6 +1603,20 @@ function renderNav() {
 function renderSummary() {
   const codeString = buildCompactCode(state.selections);
 
+  // Build the mailto URL now, at render time, so the anchor <a href> works as a
+  // plain native link — no JS click handler needed. This is the only approach
+  // that works reliably inside a cross-origin iframe (window.open is blocked).
+  const _emailLines = DATA.questions.map(q => {
+    const c = state.selections[q.key];
+    const lbl = c ? DATA.options[q.key][c] : '-';
+    return `  ${q.short.padEnd(12)} ${c || '---'}  ${lbl}`;
+  }).join('%0D%0A');
+  const _emailSubject = encodeURIComponent('Request for system quote: ' + codeString);
+  const _emailBody = encodeURIComponent(
+    'Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + codeString + '\n\n'
+  ).replace(/%0A/g, '%0D%0A') + _emailLines + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
+  const _mailtoHref = `mailto:jeff@orionautomation.com.au?subject=${_emailSubject}&body=${_emailBody}`;
+
   // Large hero from process selection
   const processCode = state.selections['process'];
   const processImgs = processCode ? getImagesForOption('process', processCode) : [];
@@ -1633,9 +1647,8 @@ function renderSummary() {
         <p>Share this with our team to receive a detailed system proposal & pricing.</p>
       </div>
       <div class="summary-actions">
-        <a class="btn btn-primary" id="email-quote" href="#">Email for quote</a>
+        <a class="btn btn-primary" href="${_mailtoHref}">Email for quote</a>
         <button class="btn btn-secondary" id="back-to-config">← Edit answers</button>
-        <button class="btn btn-secondary" id="share-link">Share link</button>
         <button class="btn btn-secondary" id="print-spec">Print</button>
         <button class="restart-btn" id="restart-btn">↻ Start over</button>
       </div>
@@ -1805,46 +1818,12 @@ function bindSummary() {
     const code = $('config-code').textContent;
     navigator.clipboard.writeText(code).then(showToast);
   });
-  $('share-link').addEventListener('click', () => {
-    // When embedded we can't read window.parent.location cross-origin.
-    // Ask the parent embed script to send us its URL via postMessage, then copy it.
-    // Falls back to our own location (direct GitHub Pages visits).
-    if (window.parent !== window) {
-      const handler = (ev) => {
-        if (ev.data && ev.data.type === 'orion-bsc-parent-url') {
-          window.removeEventListener('message', handler);
-          navigator.clipboard.writeText(ev.data.url).then(() => showToast('Link copied to clipboard'));
-        }
-      };
-      window.addEventListener('message', handler);
-      setTimeout(() => window.removeEventListener('message', handler), 1500); // safety cleanup
-      window.parent.postMessage({ type: 'orion-bsc-request-url' }, '*');
-    } else {
-      navigator.clipboard.writeText(location.href).then(() => showToast('Link copied to clipboard'));
-    }
-  });
   $('print-spec').addEventListener('click', () => window.print());
   $('back-to-config').addEventListener('click', () => {
     state.step = QUESTION_KEYS.length - 1;
     render();
   });
   $('restart-summary').addEventListener('click', resetAll);
-  $('email-quote').addEventListener('click', e => {
-    e.preventDefault();
-    const code = $('config-code').textContent;
-    const lines = DATA.questions.map(q => {
-      const c = state.selections[q.key];
-      const lbl = c ? DATA.options[q.key][c] : '-';
-      return `  ${q.short.padEnd(12)} ${c || '---'}  ${lbl}`;
-    }).join('%0D%0A');
-    const subject = encodeURIComponent('Request for system quote: ' + code);
-    const body = encodeURIComponent('Hello,\n\nI have configured a welding cell with the following specification:\n\nConfiguration code: ' + code + '\n\n').replace(/%0A/g,'%0D%0A')
-      + lines
-      + encodeURIComponent('\n\nPlease send a quote and confirm any clarifying details.\n\nThanks,\n');
-    // window.open handles mailto reliably in cross-origin iframes;
-    // window.location.href can be blocked by the browser when embedded.
-    window.open(`mailto:jeff@orionautomation.com.au?subject=${subject}&body=${body}`);
-  });
 }
 
 // When a selection changes, downstream selections may no longer satisfy rules.
